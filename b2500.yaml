@@ -23,12 +23,6 @@ esp32:
     sdkconfig_options:
       COMPILER_OPTIMIZATION_SIZE: y
 
-esp32_ble_tracker:
-  scan_parameters:
-    interval: 1100ms
-    window: 40ms
-    active: false
-
 # Enable logging
 logger:
   level: WARN
@@ -179,6 +173,11 @@ esp32_ble:
   max_connections: 2
 
 esp32_ble_tracker:
+  scan_parameters:
+    interval: 1100ms
+    window: 40ms
+    active: false
+
 
 ble_client:
   - mac_address: "e8:8d:a6:f3:5b:5b"
