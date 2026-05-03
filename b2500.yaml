@@ -68,8 +68,6 @@ mqtt:
   broker: "192.168.178.98"
   port: 1883
   keepalive: 60s
-  buffer_size: 512
-  rx_buffer_size: 512
   username: "mqtt-user"
   password: "ghmue001"
   discovery: True
