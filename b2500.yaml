@@ -1,0 +1,955 @@
+esphome:
+  name: "b2500"
+  friendly_name: "B2500"
+  devices:
+    - id: b2500_device_1
+      name: "B2500"
+    - id: b2500_device_2
+      name: "B2500D"
+
+esp32:
+  board: "esp32-s3-devkitc-1"
+  variant: "esp32s3"
+  flash_size: 4MB
+  framework:
+    type: esp-idf
+    sdkconfig_options:
+      COMPILER_OPTIMIZATION_SIZE: y
+
+esp32_ble_tracker:
+  scan_parameters:
+    interval: 1100ms
+    window: 40ms
+    active: false
+
+# Enable logging
+logger:
+  level: INFO
+ota:
+  - platform: esphome
+    password: "my_ota_password"
+external_components:
+  - source:
+      type: git
+      url: https://github.com/tomquist/esphome-b2500
+      ref: "main"
+    refresh: 0s
+    components: [b2500]
+
+wifi:
+  ssid: "doreen1"
+  password: "2DP3UGGRU3GZFKLM"
+  reboot_timeout: 0s
+  fast_connect: True
+  manual_ip:
+    static_ip: "192.168.178.97"
+    gateway: "192.168.178.1"
+    subnet: "255.255.255.0"
+    dns1: "192.168.178.1"
+  on_connect:
+    - logger.log:
+        level: INFO
+        format: "Connected to WiFi. Starting BLE scan."
+  on_disconnect:
+    - logger.log:
+        level: INFO
+        format: "Disconnected from WiFi. Stopping BLE scan."
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "ESPHome-b2500"
+web_server:
+  port: 80
+  version: 3
+captive_portal:
+
+mqtt:
+  keepalive: 60s
+  reboot_timeout: 0s
+  buffer_size: 512
+  rx_buffer_size: 512
+  id: mqtt_client
+  broker: "192.168.178.98"
+  port: 1883
+  username: "mqtt-user"
+  password: "ghmue001"
+  discovery: True
+  reboot_timeout: 0s
+  topic_prefix: "b2500"
+  log_topic: "b2500/debug"
+  on_connect:
+    - logger.log:
+        level: INFO
+        format: "MQTT connected"
+  on_disconnect:
+    - logger.log:
+        level: INFO
+        format: "MQTT disconnected"
+  on_message:
+    - topic: "b2500/1/charge_mode/set"
+      then:
+        - b2500.set_charge_mode:
+            id: b2500_1
+            charge_mode: !lambda "return x;"
+    - topic: "b2500/1/smartmeter/enabled/set"
+      then:
+        - b2500.set_adaptive_mode_enabled:
+            id: b2500_1
+            generation: 2
+            enabled: !lambda 'return x == "ON";'
+    - topic: "b2500/2/charge_mode/set"
+      then:
+        - b2500.set_charge_mode:
+            id: b2500_2
+            charge_mode: !lambda "return x;"
+    - topic: "b2500/2/smartmeter/enabled/set"
+      then:
+        - b2500.set_adaptive_mode_enabled:
+            id: b2500_2
+            generation: 2
+            enabled: !lambda 'return x == "ON";'
+  on_json_message:
+    - topic: "b2500/1/timer/set"
+      then:
+        - b2500.set_timer:
+            id: b2500_1
+            generation: 2
+            timer: 0
+            enabled: !lambda 'return x["enabled"].is<bool>() ? make_optional(x["enabled"].as<bool>()) : optional<bool>();'
+            output_power: !lambda 'return x["outputPower"].is<int>() ? x["outputPower"].as<int>() : optional<int>();'
+            start_hour: !lambda 'return x["start"]["hour"].is<int>() ? x["start"]["hour"].as<int>() : optional<int>();'
+            start_minute: !lambda 'return x["start"]["minute"].is<int>() ? x["start"]["minute"].as<int>() : optional<int>();'
+            end_hour: !lambda 'return x["end"]["hour"].is<int>() ? x["end"]["hour"].as<int>() : optional<int>();'
+            end_minute: !lambda 'return x["end"]["minute"].is<int>() ? x["end"]["minute"].as<int>() : optional<int>();'
+    - topic: "b2500/1/timer/set"
+      then:
+        - b2500.set_timer:
+            id: b2500_1
+            generation: 2
+            timer: 1
+            enabled: !lambda 'return x["enabled"].is<bool>() ? make_optional(x["enabled"].as<bool>()) : optional<bool>();'
+            output_power: !lambda 'return x["outputPower"].is<int>() ? x["outputPower"].as<int>() : optional<int>();'
+            start_hour: !lambda 'return x["start"]["hour"].is<int>() ? x["start"]["hour"].as<int>() : optional<int>();'
+            start_minute: !lambda 'return x["start"]["minute"].is<int>() ? x["start"]["minute"].as<int>() : optional<int>();'
+            end_hour: !lambda 'return x["end"]["hour"].is<int>() ? x["end"]["hour"].as<int>() : optional<int>();'
+            end_minute: !lambda 'return x["end"]["minute"].is<int>() ? x["end"]["minute"].as<int>() : optional<int>();'
+    - topic: "b2500/1/timer/set"
+      then:
+        - b2500.set_timer:
+            id: b2500_1
+            generation: 2
+            timer: 2
+            enabled: !lambda 'return x["enabled"].is<bool>() ? make_optional(x["enabled"].as<bool>()) : optional<bool>();'
+            output_power: !lambda 'return x["outputPower"].is<int>() ? x["outputPower"].as<int>() : optional<int>();'
+            start_hour: !lambda 'return x["start"]["hour"].is<int>() ? x["start"]["hour"].as<int>() : optional<int>();'
+            start_minute: !lambda 'return x["start"]["minute"].is<int>() ? x["start"]["minute"].as<int>() : optional<int>();'
+            end_hour: !lambda 'return x["end"]["hour"].is<int>() ? x["end"]["hour"].as<int>() : optional<int>();'
+            end_minute: !lambda 'return x["end"]["minute"].is<int>() ? x["end"]["minute"].as<int>() : optional<int>();'
+    - topic: "b2500/1/timer/set"
+      then:
+        - b2500.set_timer:
+            id: b2500_1
+            generation: 2
+            timer: 3
+            enabled: !lambda 'return x["enabled"].is<bool>() ? make_optional(x["enabled"].as<bool>()) : optional<bool>();'
+            output_power: !lambda 'return x["outputPower"].is<int>() ? x["outputPower"].as<int>() : optional<int>();'
+            start_hour: !lambda 'return x["start"]["hour"].is<int>() ? x["start"]["hour"].as<int>() : optional<int>();'
+            start_minute: !lambda 'return x["start"]["minute"].is<int>() ? x["start"]["minute"].as<int>() : optional<int>();'
+            end_hour: !lambda 'return x["end"]["hour"].is<int>() ? x["end"]["hour"].as<int>() : optional<int>();'
+            end_minute: !lambda 'return x["end"]["minute"].is<int>() ? x["end"]["minute"].as<int>() : optional<int>();'
+    - topic: "b2500/1/timer/set"
+      then:
+        - b2500.set_timer:
+            id: b2500_1
+            generation: 2
+            timer: 4
+            enabled: !lambda 'return x["enabled"].is<bool>() ? make_optional(x["enabled"].as<bool>()) : optional<bool>();'
+            output_power: !lambda 'return x["outputPower"].is<int>() ? x["outputPower"].as<int>() : optional<int>();'
+            start_hour: !lambda 'return x["start"]["hour"].is<int>() ? x["start"]["hour"].as<int>() : optional<int>();'
+            start_minute: !lambda 'return x["start"]["minute"].is<int>() ? x["start"]["minute"].as<int>() : optional<int>();'
+            end_hour: !lambda 'return x["end"]["hour"].is<int>() ? x["end"]["hour"].as<int>() : optional<int>();'
+            end_minute: !lambda 'return x["end"]["minute"].is<int>() ? x["end"]["minute"].as<int>() : optional<int>();'
+    - topic: "b2500/2/timer/set"
+      then:
+        - b2500.set_timer:
+            id: b2500_2
+            generation: 2
+            timer: 0
+            enabled: !lambda 'return x["enabled"].is<bool>() ? make_optional(x["enabled"].as<bool>()) : optional<bool>();'
+            output_power: !lambda 'return x["outputPower"].is<int>() ? x["outputPower"].as<int>() : optional<int>();'
+            start_hour: !lambda 'return x["start"]["hour"].is<int>() ? x["start"]["hour"].as<int>() : optional<int>();'
+            start_minute: !lambda 'return x["start"]["minute"].is<int>() ? x["start"]["minute"].as<int>() : optional<int>();'
+            end_hour: !lambda 'return x["end"]["hour"].is<int>() ? x["end"]["hour"].as<int>() : optional<int>();'
+            end_minute: !lambda 'return x["end"]["minute"].is<int>() ? x["end"]["minute"].as<int>() : optional<int>();'
+    - topic: "b2500/2/timer/set"
+      then:
+        - b2500.set_timer:
+            id: b2500_2
+            generation: 2
+            timer: 1
+            enabled: !lambda 'return x["enabled"].is<bool>() ? make_optional(x["enabled"].as<bool>()) : optional<bool>();'
+            output_power: !lambda 'return x["outputPower"].is<int>() ? x["outputPower"].as<int>() : optional<int>();'
+            start_hour: !lambda 'return x["start"]["hour"].is<int>() ? x["start"]["hour"].as<int>() : optional<int>();'
+            start_minute: !lambda 'return x["start"]["minute"].is<int>() ? x["start"]["minute"].as<int>() : optional<int>();'
+            end_hour: !lambda 'return x["end"]["hour"].is<int>() ? x["end"]["hour"].as<int>() : optional<int>();'
+            end_minute: !lambda 'return x["end"]["minute"].is<int>() ? x["end"]["minute"].as<int>() : optional<int>();'
+    - topic: "b2500/2/timer/set"
+      then:
+        - b2500.set_timer:
+            id: b2500_2
+            generation: 2
+            timer: 2
+            enabled: !lambda 'return x["enabled"].is<bool>() ? make_optional(x["enabled"].as<bool>()) : optional<bool>();'
+            output_power: !lambda 'return x["outputPower"].is<int>() ? x["outputPower"].as<int>() : optional<int>();'
+            start_hour: !lambda 'return x["start"]["hour"].is<int>() ? x["start"]["hour"].as<int>() : optional<int>();'
+            start_minute: !lambda 'return x["start"]["minute"].is<int>() ? x["start"]["minute"].as<int>() : optional<int>();'
+            end_hour: !lambda 'return x["end"]["hour"].is<int>() ? x["end"]["hour"].as<int>() : optional<int>();'
+            end_minute: !lambda 'return x["end"]["minute"].is<int>() ? x["end"]["minute"].as<int>() : optional<int>();'
+    - topic: "b2500/2/timer/set"
+      then:
+        - b2500.set_timer:
+            id: b2500_2
+            generation: 2
+            timer: 3
+            enabled: !lambda 'return x["enabled"].is<bool>() ? make_optional(x["enabled"].as<bool>()) : optional<bool>();'
+            output_power: !lambda 'return x["outputPower"].is<int>() ? x["outputPower"].as<int>() : optional<int>();'
+            start_hour: !lambda 'return x["start"]["hour"].is<int>() ? x["start"]["hour"].as<int>() : optional<int>();'
+            start_minute: !lambda 'return x["start"]["minute"].is<int>() ? x["start"]["minute"].as<int>() : optional<int>();'
+            end_hour: !lambda 'return x["end"]["hour"].is<int>() ? x["end"]["hour"].as<int>() : optional<int>();'
+            end_minute: !lambda 'return x["end"]["minute"].is<int>() ? x["end"]["minute"].as<int>() : optional<int>();'
+    - topic: "b2500/2/timer/set"
+      then:
+        - b2500.set_timer:
+            id: b2500_2
+            generation: 2
+            timer: 4
+            enabled: !lambda 'return x["enabled"].is<bool>() ? make_optional(x["enabled"].as<bool>()) : optional<bool>();'
+            output_power: !lambda 'return x["outputPower"].is<int>() ? x["outputPower"].as<int>() : optional<int>();'
+            start_hour: !lambda 'return x["start"]["hour"].is<int>() ? x["start"]["hour"].as<int>() : optional<int>();'
+            start_minute: !lambda 'return x["start"]["minute"].is<int>() ? x["start"]["minute"].as<int>() : optional<int>();'
+            end_hour: !lambda 'return x["end"]["hour"].is<int>() ? x["end"]["hour"].as<int>() : optional<int>();'
+            end_minute: !lambda 'return x["end"]["minute"].is<int>() ? x["end"]["minute"].as<int>() : optional<int>();'
+
+b2500:
+  - id: b2500_1
+    generation: 2
+    update_interval: 5s
+    ble_client_id: b2500_ble_client_1
+    on_device_info:
+      then:
+        - lambda: |-
+            auto device_info_json = json::build_json([x](JsonObject root) {
+              root["type"] = x.type;
+              root["id"] = x.id;
+              root["mac"] = x.mac;
+            });
+            id(mqtt_client).publish("b2500/1/device", device_info_json);
+    on_runtime_info:
+      then:
+        - lambda: |-
+            auto runtime_info_json = json::build_json([x](JsonObject root) {
+              auto in1 = root.createNestedObject("in1");
+              in1["active"] = x.in1_active.active == 1;
+              in1["transparent"] = x.in1_active.transparent == 1;
+              in1["power"] = x.in1_power;
+              
+              auto in2 = root.createNestedObject("in2");
+              in2["active"] = x.in2_active.active == 1;
+              in2["transparent"] = x.in2_active.transparent == 1;
+              in2["power"] = x.in2_power;
+
+              root["soc"] = x.soc;
+              root["capacity"] = x.remaining_capacity;
+
+              root["deviceVersion"] = x.dev_version;
+              if (x.charge_mode.load_first) {
+                root["chargeMode"] = "LoadFirst";
+              } else {
+                root["chargeMode"] = "SimultaneousChargeAndDischarge";
+              }
+
+              auto out1 = root.createNestedObject("out1");
+              out1["active"] = x.out1_active == 1;
+              out1["power"] = x.out1_power;
+              out1["enabled"] = x.discharge_setting.out1_enable == 1;
+              
+              auto out2 = root.createNestedObject("out2");
+              out2["active"] = x.out2_active == 1;
+              out2["power"] = x.out2_power;
+              out2["enabled"] = x.discharge_setting.out2_enable == 1;
+
+              root["dod"] = x.dod;
+              root["wifiConnected"] = x.wifi_mqtt_state.wifi_connected == 1;
+              root["mqttConnected"] = x.wifi_mqtt_state.mqtt_connected == 1;
+
+              root["dischargeThreshold"] = x.discharge_threshold;
+              switch (x.device_scene) {
+                case DeviceScene::SCENE_DAY:
+                  root["scene"] = "DAY";
+                  break;
+                case DeviceScene::SCENE_NIGHT:
+                  root["scene"] = "NIGHT";
+                  break;
+                case DeviceScene::SCENE_DUSK_DAWN:
+                  root["scene"] = "DUSK_DAWN";
+                  break;
+                case DeviceScene::SCENE_UNKNOWN:
+                  root["scene"] = "UNKNOWN";
+                  break;
+              }
+
+              switch (x.device_region) {
+                case DeviceRegion::REGION_EU:
+                  root["region"] = "EU";
+                  break;
+                case DeviceRegion::REGION_CHINA:
+                  root["region"] = "CHINA";
+                  break;
+                case DeviceRegion::REGION_NON_EU:
+                  root["region"] = "NON_EU";
+                  break;
+                case DeviceRegion::REGION_NOT_SET:
+                  root["region"] = "NOT_SET";
+                  break;
+                case DeviceRegion::REGION_UNKNOWN:
+                  root["region"] = "UNKNOWN";
+                  break;
+              }
+
+              auto ext = root.createNestedObject("extern");
+              ext["connected1"] = x.extern1_connected == 1;
+              ext["connected2"] = x.extern2_connected == 1;
+
+              auto hour = x.time.hour;
+              auto minute = x.time.minute;
+              char buffer[8];
+              sprintf(buffer, "%02d:%02d", hour, minute);
+              auto time_str = std::string(buffer);
+              root["time"] = time_str;
+
+              auto temperature = root.createNestedObject("temperature");
+              temperature["low"] = x.temperature_low;
+              temperature["high"] = x.temperature_high;
+              auto energy = root.createNestedObject("dailyTotalEnergy");
+              energy["batteryCharge"] = x.daily_total_battery_charge;
+              energy["batteryDischarge"] = x.daily_total_battery_discharge;
+              energy["loadCharge"] = x.daily_total_load_charge;
+              energy["loadDischarge"] = x.daily_total_load_discharge;
+            });
+            id(mqtt_client).publish("b2500/1/runtime", runtime_info_json);
+    on_cell_info:
+      then:
+        - lambda: |-
+            auto cell_info_json = json::build_json([x](JsonObject root) {
+              auto cell_info = x;
+              auto min = cell_info.cell_voltages[0];
+              auto max = cell_info.cell_voltages[0];
+              int sum = 0;
+              JsonArray cells = root.createNestedArray("cells");
+              for (int i = 0; i < 14; i++) {
+                cells.add(cell_info.cell_voltages[i] / 1000.0);
+                if (cell_info.cell_voltages[i] < min) {
+                  min = cell_info.cell_voltages[i];
+                }
+                if (cell_info.cell_voltages[i] > max) {
+                  max = cell_info.cell_voltages[i];
+                }
+                sum += cell_info.cell_voltages[i];
+              }
+              root["min"] = (min / 1000.0);
+              root["max"] = (max / 1000.0);
+              root["avg"] = ((sum / 14.0) / 1000.0);
+              root["sum"] = (sum / 1000.0);
+              root["delta"] = ((max - min) / 1000.0);
+            });
+            id(mqtt_client).publish("b2500/1/cell", cell_info_json);
+    on_wifi_info:
+      then:
+        - lambda: |-
+            auto wifi_info_json = json::build_json([x](JsonObject root) {
+              root["ssid"] = x.ssid;
+              root["rssi"] = x.signal;
+            });
+            id(mqtt_client).publish("b2500/1/wifi", wifi_info_json);
+    on_fc41d_info:
+      then:
+        - lambda: |-
+            auto fc41d_info_json = json::build_json([x](JsonObject root) {
+              root["version"] = x.firmware;
+            });
+            id(mqtt_client).publish("b2500/1/fc41d", fc41d_info_json);
+    on_timer_info:
+      then:
+        - lambda: |-
+            auto timer_info_json = json::build_json([x](JsonObject root) {
+              root["adaptiveModeEnabled"] = x.base.adaptive_mode_enabled == 1;
+              auto smart_meter = root.createNestedObject("smartMeter");
+              smart_meter["connected"] = x.base.smart_meter.connected == 1;
+              smart_meter["reading"] = x.base.smart_meter.meter_reading;
+              smart_meter["power"] = x.base.smart_meter.power_out;
+              smart_meter["unknown"] = x.base.smart_meter.unknown;
+
+              for (int i = 0; i < 5; i++) {
+                auto timer_json = root.createNestedObject("timer" + std::to_string(i + 1));
+                const esphome::b2500::TimerInfo* timer;
+                if (i < 3) {
+                  timer = &x.base.timer[i];
+                } else {
+                  timer = &x.additional_timers[i - 3];
+                }
+                timer_json["enabled"] = timer->enabled == 1;
+                timer_json["outputPower"] = timer->output_power;
+                auto start = timer_json.createNestedObject("start");
+                start["hour"] = timer->start.hour;
+                start["minute"] = timer->start.minute;
+                auto end = timer_json.createNestedObject("end");
+                end["hour"] = timer->end.hour;
+                end["minute"] = timer->end.minute;
+              }
+            });
+            id(mqtt_client).publish("b2500/1/timer", timer_info_json);
+  - id: b2500_2
+    generation: 2
+    update_interval: 5s
+    ble_client_id: b2500_ble_client_2
+    on_device_info:
+      then:
+        - lambda: |-
+            auto device_info_json = json::build_json([x](JsonObject root) {
+              root["type"] = x.type;
+              root["id"] = x.id;
+              root["mac"] = x.mac;
+            });
+            id(mqtt_client).publish("b2500/2/device", device_info_json);
+    on_runtime_info:
+      then:
+        - lambda: |-
+            auto runtime_info_json = json::build_json([x](JsonObject root) {
+              auto in1 = root.createNestedObject("in1");
+              in1["active"] = x.in1_active.active == 1;
+              in1["transparent"] = x.in1_active.transparent == 1;
+              in1["power"] = x.in1_power;
+              
+              auto in2 = root.createNestedObject("in2");
+              in2["active"] = x.in2_active.active == 1;
+              in2["transparent"] = x.in2_active.transparent == 1;
+              in2["power"] = x.in2_power;
+
+              root["soc"] = x.soc;
+              root["capacity"] = x.remaining_capacity;
+
+              root["deviceVersion"] = x.dev_version;
+              if (x.charge_mode.load_first) {
+                root["chargeMode"] = "LoadFirst";
+              } else {
+                root["chargeMode"] = "SimultaneousChargeAndDischarge";
+              }
+
+              auto out1 = root.createNestedObject("out1");
+              out1["active"] = x.out1_active == 1;
+              out1["power"] = x.out1_power;
+              out1["enabled"] = x.discharge_setting.out1_enable == 1;
+              
+              auto out2 = root.createNestedObject("out2");
+              out2["active"] = x.out2_active == 1;
+              out2["power"] = x.out2_power;
+              out2["enabled"] = x.discharge_setting.out2_enable == 1;
+
+              root["dod"] = x.dod;
+              root["wifiConnected"] = x.wifi_mqtt_state.wifi_connected == 1;
+              root["mqttConnected"] = x.wifi_mqtt_state.mqtt_connected == 1;
+
+              root["dischargeThreshold"] = x.discharge_threshold;
+              switch (x.device_scene) {
+                case DeviceScene::SCENE_DAY:
+                  root["scene"] = "DAY";
+                  break;
+                case DeviceScene::SCENE_NIGHT:
+                  root["scene"] = "NIGHT";
+                  break;
+                case DeviceScene::SCENE_DUSK_DAWN:
+                  root["scene"] = "DUSK_DAWN";
+                  break;
+                case DeviceScene::SCENE_UNKNOWN:
+                  root["scene"] = "UNKNOWN";
+                  break;
+              }
+
+              switch (x.device_region) {
+                case DeviceRegion::REGION_EU:
+                  root["region"] = "EU";
+                  break;
+                case DeviceRegion::REGION_CHINA:
+                  root["region"] = "CHINA";
+                  break;
+                case DeviceRegion::REGION_NON_EU:
+                  root["region"] = "NON_EU";
+                  break;
+                case DeviceRegion::REGION_NOT_SET:
+                  root["region"] = "NOT_SET";
+                  break;
+                case DeviceRegion::REGION_UNKNOWN:
+                  root["region"] = "UNKNOWN";
+                  break;
+              }
+
+              auto ext = root.createNestedObject("extern");
+              ext["connected1"] = x.extern1_connected == 1;
+              ext["connected2"] = x.extern2_connected == 1;
+
+              auto hour = x.time.hour;
+              auto minute = x.time.minute;
+              char buffer[8];
+              sprintf(buffer, "%02d:%02d", hour, minute);
+              auto time_str = std::string(buffer);
+              root["time"] = time_str;
+
+              auto temperature = root.createNestedObject("temperature");
+              temperature["low"] = x.temperature_low;
+              temperature["high"] = x.temperature_high;
+              auto energy = root.createNestedObject("dailyTotalEnergy");
+              energy["batteryCharge"] = x.daily_total_battery_charge;
+              energy["batteryDischarge"] = x.daily_total_battery_discharge;
+              energy["loadCharge"] = x.daily_total_load_charge;
+              energy["loadDischarge"] = x.daily_total_load_discharge;
+            });
+            id(mqtt_client).publish("b2500/2/runtime", runtime_info_json);
+    on_cell_info:
+      then:
+        - lambda: |-
+            auto cell_info_json = json::build_json([x](JsonObject root) {
+              auto cell_info = x;
+              auto min = cell_info.cell_voltages[0];
+              auto max = cell_info.cell_voltages[0];
+              int sum = 0;
+              JsonArray cells = root.createNestedArray("cells");
+              for (int i = 0; i < 14; i++) {
+                cells.add(cell_info.cell_voltages[i] / 1000.0);
+                if (cell_info.cell_voltages[i] < min) {
+                  min = cell_info.cell_voltages[i];
+                }
+                if (cell_info.cell_voltages[i] > max) {
+                  max = cell_info.cell_voltages[i];
+                }
+                sum += cell_info.cell_voltages[i];
+              }
+              root["min"] = (min / 1000.0);
+              root["max"] = (max / 1000.0);
+              root["avg"] = ((sum / 14.0) / 1000.0);
+              root["sum"] = (sum / 1000.0);
+              root["delta"] = ((max - min) / 1000.0);
+            });
+            id(mqtt_client).publish("b2500/2/cell", cell_info_json);
+    on_wifi_info:
+      then:
+        - lambda: |-
+            auto wifi_info_json = json::build_json([x](JsonObject root) {
+              root["ssid"] = x.ssid;
+              root["rssi"] = x.signal;
+            });
+            id(mqtt_client).publish("b2500/2/wifi", wifi_info_json);
+    on_fc41d_info:
+      then:
+        - lambda: |-
+            auto fc41d_info_json = json::build_json([x](JsonObject root) {
+              root["version"] = x.firmware;
+            });
+            id(mqtt_client).publish("b2500/2/fc41d", fc41d_info_json);
+    on_timer_info:
+      then:
+        - lambda: |-
+            auto timer_info_json = json::build_json([x](JsonObject root) {
+              root["adaptiveModeEnabled"] = x.base.adaptive_mode_enabled == 1;
+              auto smart_meter = root.createNestedObject("smartMeter");
+              smart_meter["connected"] = x.base.smart_meter.connected == 1;
+              smart_meter["reading"] = x.base.smart_meter.meter_reading;
+              smart_meter["power"] = x.base.smart_meter.power_out;
+              smart_meter["unknown"] = x.base.smart_meter.unknown;
+
+              for (int i = 0; i < 5; i++) {
+                auto timer_json = root.createNestedObject("timer" + std::to_string(i + 1));
+                const esphome::b2500::TimerInfo* timer;
+                if (i < 3) {
+                  timer = &x.base.timer[i];
+                } else {
+                  timer = &x.additional_timers[i - 3];
+                }
+                timer_json["enabled"] = timer->enabled == 1;
+                timer_json["outputPower"] = timer->output_power;
+                auto start = timer_json.createNestedObject("start");
+                start["hour"] = timer->start.hour;
+                start["minute"] = timer->start.minute;
+                auto end = timer_json.createNestedObject("end");
+                end["hour"] = timer->end.hour;
+                end["minute"] = timer->end.minute;
+              }
+            });
+            id(mqtt_client).publish("b2500/2/timer", timer_info_json);
+
+time:
+  - platform: sntp
+    id: sntp_time
+    timezone: "Europe/Berlin"
+
+esp32_ble:
+  id: ble
+  max_connections: 2
+
+esp32_ble_tracker:
+
+ble_client:
+  - mac_address: "e8:8d:a6:f3:5b:5b"
+    id: b2500_ble_client_1
+    on_connect:
+      then:
+        - logger.log:
+            level: INFO
+            format: "Connected to BLE device 1 (B2500)"
+        - binary_sensor.template.publish:
+            id: b2500_device_ble_ok_1
+            state: ON
+        - delay: 1s
+        - b2500.set_datetime:
+            id: b2500_1
+            datetime: !lambda 'return id(sntp_time).now();'
+
+    on_disconnect:
+      then:
+        - logger.log:
+            level: INFO
+            format: "Disconnected from BLE device 1 (B2500)"
+        - binary_sensor.template.publish:
+            id: b2500_device_ble_ok_1
+            state: OFF
+  - mac_address: "14:80:cc:fa:55:f7"
+    id: b2500_ble_client_2
+    on_connect:
+      then:
+        - logger.log:
+            level: INFO
+            format: "Connected to BLE device 2 (B2500D)"
+        - binary_sensor.template.publish:
+            id: b2500_device_ble_ok_2
+            state: ON
+        - delay: 1s
+        - b2500.set_datetime:
+            id: b2500_2
+            datetime: !lambda 'return id(sntp_time).now();'
+
+    on_disconnect:
+      then:
+        - logger.log:
+            level: INFO
+            format: "Disconnected from BLE device 2 (B2500D)"
+        - binary_sensor.template.publish:
+            id: b2500_device_ble_ok_2
+            state: OFF
+
+button:
+  - platform: restart
+    id: controller_restart
+    name: "Restart Controller"
+    command_topic: "b2500/restart/set"
+  - platform: b2500
+    b2500_id: b2500_1
+    generation: 2
+    reboot:
+      id: b2500_button_reboot_1
+      name: "B2500 - 1 - B2500: Reboot B2500"
+      device_id: b2500_device_1
+      command_topic: "b2500/1/reboot/set"
+    factory_reset:
+      id: b2500_button_factory_reset_1
+      name: "B2500 - 1 - B2500: Reset to Factory Settings"
+      device_id: b2500_device_1
+      command_topic: "b2500/1/factory_settings/set"
+      disabled_by_default: True
+    hardware_reset:
+      id: b2500_button_hardware_reset_1
+      name: "B2500 - 1 - B2500: Hardware Reset"
+      device_id: b2500_device_1
+      command_topic: "b2500/1/hardware_reset/set"
+      disabled_by_default: True
+  - platform: b2500
+    b2500_id: b2500_2
+    generation: 2
+    reboot:
+      id: b2500_button_reboot_2
+      name: "B2500 - 2 - B2500D: Reboot B2500"
+      device_id: b2500_device_2
+      command_topic: "b2500/2/reboot/set"
+    factory_reset:
+      id: b2500_button_factory_reset_2
+      name: "B2500 - 2 - B2500D: Reset to Factory Settings"
+      device_id: b2500_device_2
+      command_topic: "b2500/2/factory_settings/set"
+      disabled_by_default: True
+    hardware_reset:
+      id: b2500_button_hardware_reset_2
+      name: "B2500 - 2 - B2500D: Hardware Reset"
+      device_id: b2500_device_2
+      command_topic: "b2500/2/hardware_reset/set"
+      disabled_by_default: True
+
+
+switch:
+  - platform: ble_client
+    ble_client_id: b2500_ble_client_1
+    id: b2500_bluetooth_enabled_1
+    name: "B2500 - 1 - B2500: Bluetooth Enabled"
+    device_id: b2500_device_1
+    state_topic: "b2500/1/bluetooth/enabled"
+    command_topic: "b2500/1/bluetooth/enabled/set"
+    icon: mdi:bluetooth-connect
+  - platform: b2500
+    b2500_id: b2500_1
+    generation: 2
+    adaptive_mode:
+      id: b2500_smartmeter_enabled_1
+      name: "B2500 - 1 - B2500: SmartMeter Enabled"
+      device_id: b2500_device_1
+      state_topic: "b2500/1/smartmeter/enabled"
+      command_topic: "b2500/1/smartmeter/enabled/set"
+    surplus_feed_in:
+      id: b2500_surplus_feed_in_enabled_1
+      name: "B2500 - 1 - B2500: Surplus Feed-in Enabled"
+      device_id: b2500_device_1
+      state_topic: "b2500/1/device/surplus_feed_in"
+      command_topic: "b2500/1/device/surplus_feed_in/set"
+  - platform: ble_client
+    ble_client_id: b2500_ble_client_2
+    id: b2500_bluetooth_enabled_2
+    name: "B2500 - 2 - B2500D: Bluetooth Enabled"
+    device_id: b2500_device_2
+    state_topic: "b2500/2/bluetooth/enabled"
+    command_topic: "b2500/2/bluetooth/enabled/set"
+    icon: mdi:bluetooth-connect
+  - platform: b2500
+    b2500_id: b2500_2
+    generation: 2
+    adaptive_mode:
+      id: b2500_smartmeter_enabled_2
+      name: "B2500 - 2 - B2500D: SmartMeter Enabled"
+      device_id: b2500_device_2
+      state_topic: "b2500/2/smartmeter/enabled"
+      command_topic: "b2500/2/smartmeter/enabled/set"
+    surplus_feed_in:
+      id: b2500_surplus_feed_in_enabled_2
+      name: "B2500 - 2 - B2500D: Surplus Feed-in Enabled"
+      device_id: b2500_device_2
+      state_topic: "b2500/2/device/surplus_feed_in"
+      command_topic: "b2500/2/device/surplus_feed_in/set"
+
+binary_sensor:
+  - platform: template
+    id: b2500_device_ble_ok_1
+    name: "B2500 - 1 - B2500: BLE Connected"
+    device_id: b2500_device_1
+    state_topic: "b2500/1/device/ble_ok"
+    icon: mdi:bluetooth
+  - platform: template
+    id: b2500_device_ble_ok_2
+    name: "B2500 - 2 - B2500D: BLE Connected"
+    device_id: b2500_device_2
+    state_topic: "b2500/2/device/ble_ok"
+    icon: mdi:bluetooth
+
+sensor:
+  - platform: uptime
+    name: Uptime Sensor
+    filters:
+      - lambda: return x / 3600.0;
+    unit_of_measurement: "h"
+    accuracy_decimals: 2
+    state_topic: "b2500/esp32/uptime"
+    retain: false
+  - platform: b2500
+    b2500_id: b2500_1
+    generation: 2
+    publish_unchanged_sensor_values: True
+    in1_power:
+      id: b2500_in1_power_1
+      name: "B2500 - 1 - B2500: In 1 - Power"
+      device_id: b2500_device_1
+      device_class: power
+      icon: mdi:solar-power
+      retain: false
+      internal: true
+    in2_power:
+      id: b2500_in2_power_1
+      name: "B2500 - 1 - B2500: In 2 - Power"
+      device_id: b2500_device_1
+      device_class: power
+      icon: mdi:solar-power
+      retain: false
+      internal: true
+    in_total_power:
+      id: b2500_total_power_in_1
+      name: "B2500 - 1 - B2500: Total Power In"
+      device_id: b2500_device_1
+      device_class: power
+      retain: false
+      internal: true
+    out1_power:
+      id: b2500_out1_power_1
+      name: "B2500 - 1 - B2500: Out 1 - Power"
+      device_id: b2500_device_1
+      device_class: power
+      retain: false
+      internal: true
+    out2_power:
+      id: b2500_out2_power_1
+      name: "B2500 - 1 - B2500: Out 2 - Power"
+      device_id: b2500_device_1
+      device_class: power
+      retain: false
+      internal: true
+    out_total_power:
+      id: b2500_total_power_out_1
+      name: "B2500 - 1 - B2500: Total Power Out"
+      device_id: b2500_device_1
+      device_class: power
+      retain: false
+      internal: true
+  - platform: total_daily_energy
+    id: b2500_total_daily_energy_in_1
+    name: "B2500 - 1 - B2500: Total Daily Energy In"
+    device_id: b2500_device_1
+    state_topic: "b2500/1/pv/energy"
+    power_id: b2500_total_power_in_1
+    unit_of_measurement: kWh
+    method: left
+    state_class: total_increasing
+    device_class: energy
+    accuracy_decimals: 3
+    filters:
+      - multiply: 0.001
+    on_value:
+      then:
+        - script.execute: b2500_update_total_daily_energy_in
+  - platform: total_daily_energy
+    id: b2500_total_daily_energy_out_1
+    name: "B2500 - 1 - B2500: Total Daily Energy Out"
+    device_id: b2500_device_1
+    state_topic: "b2500/1/power/energy"
+    power_id: b2500_total_power_out_1
+    unit_of_measurement: kWh
+    method: left
+    state_class: total_increasing
+    device_class: energy
+    accuracy_decimals: 3
+    filters:
+      - multiply: 0.001
+    on_value:
+      then:
+        - script.execute: b2500_update_total_daily_energy_out
+  - platform: b2500
+    b2500_id: b2500_2
+    generation: 2
+    publish_unchanged_sensor_values: True
+    in1_power:
+      id: b2500_in1_power_2
+      name: "B2500 - 2 - B2500D: In 1 - Power"
+      device_id: b2500_device_2
+      device_class: power
+      icon: mdi:solar-power
+      retain: false
+      internal: true
+    in2_power:
+      id: b2500_in2_power_2
+      name: "B2500 - 2 - B2500D: In 2 - Power"
+      device_id: b2500_device_2
+      device_class: power
+      icon: mdi:solar-power
+      retain: false
+      internal: true
+    in_total_power:
+      id: b2500_total_power_in_2
+      name: "B2500 - 2 - B2500D: Total Power In"
+      device_id: b2500_device_2
+      device_class: power
+      retain: false
+      internal: true
+    out1_power:
+      id: b2500_out1_power_2
+      name: "B2500 - 2 - B2500D: Out 1 - Power"
+      device_id: b2500_device_2
+      device_class: power
+      retain: false
+      internal: true
+    out2_power:
+      id: b2500_out2_power_2
+      name: "B2500 - 2 - B2500D: Out 2 - Power"
+      device_id: b2500_device_2
+      device_class: power
+      retain: false
+      internal: true
+    out_total_power:
+      id: b2500_total_power_out_2
+      name: "B2500 - 2 - B2500D: Total Power Out"
+      device_id: b2500_device_2
+      device_class: power
+      retain: false
+      internal: true
+  - platform: total_daily_energy
+    id: b2500_total_daily_energy_in_2
+    name: "B2500 - 2 - B2500D: Total Daily Energy In"
+    device_id: b2500_device_2
+    state_topic: "b2500/2/pv/energy"
+    power_id: b2500_total_power_in_2
+    unit_of_measurement: kWh
+    method: left
+    state_class: total_increasing
+    device_class: energy
+    accuracy_decimals: 3
+    filters:
+      - multiply: 0.001
+    on_value:
+      then:
+        - script.execute: b2500_update_total_daily_energy_in
+  - platform: total_daily_energy
+    id: b2500_total_daily_energy_out_2
+    name: "B2500 - 2 - B2500D: Total Daily Energy Out"
+    device_id: b2500_device_2
+    state_topic: "b2500/2/power/energy"
+    power_id: b2500_total_power_out_2
+    unit_of_measurement: kWh
+    method: left
+    state_class: total_increasing
+    device_class: energy
+    accuracy_decimals: 3
+    filters:
+      - multiply: 0.001
+    on_value:
+      then:
+        - script.execute: b2500_update_total_daily_energy_out
+  - platform: template
+    name: "Total Daily Energy In"
+    id: b2500_total_daily_energy_in
+    state_topic: "b2500/S/pv/energy"
+    accuracy_decimals: 3
+    unit_of_measurement: kWh
+    device_class: energy
+    retain: false
+
+  - platform: template
+    name: "Total Daily Energy Out"
+    id: b2500_total_daily_energy_out
+    state_topic: "b2500/S/power/energy"
+    accuracy_decimals: 3
+    unit_of_measurement: kWh
+    device_class: energy
+    retain: false
+
+script:
+  - id: b2500_update_total_daily_energy_in
+    then:
+      - sensor.template.publish:
+          id: b2500_total_daily_energy_in
+          state: !lambda |-
+            return id(b2500_total_daily_energy_in_1).state + id(b2500_total_daily_energy_in_2).state;
+  - id: b2500_update_total_daily_energy_out
+    then:
+      - sensor.template.publish:
+          id: b2500_total_daily_energy_out
+          state: !lambda |-
+            return id(b2500_total_daily_energy_out_1).state + id(b2500_total_daily_energy_out_2).state;
