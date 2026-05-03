@@ -6,6 +6,13 @@ esphome:
       name: "B2500"
     - id: b2500_device_2
       name: "B2500D"
+  on_boot:
+    priority: -100
+    then:
+      - lambda: id(b2500_device_generation_1).publish_state("2");
+      - lambda: id(b2500_device_name_1).publish_state("B2500");
+      - lambda: id(b2500_device_generation_2).publish_state("2");
+      - lambda: id(b2500_device_name_2).publish_state("B2500D");
 
 esp32:
   board: "esp32-s3-devkitc-1"
@@ -24,7 +31,7 @@ esp32_ble_tracker:
 
 # Enable logging
 logger:
-  level: INFO
+  level: WARN
 ota:
   - platform: esphome
     password: "my_ota_password"
@@ -59,17 +66,16 @@ wifi:
     ssid: "ESPHome-b2500"
 web_server:
   port: 80
+  ota: false
   version: 3
 captive_portal:
-
 mqtt:
-  keepalive: 60s
-  reboot_timeout: 0s
-  buffer_size: 512
-  rx_buffer_size: 512
   id: mqtt_client
   broker: "192.168.178.98"
   port: 1883
+  keepalive: 60s
+  buffer_size: 512
+  rx_buffer_size: 512
   username: "mqtt-user"
   password: "ghmue001"
   discovery: True
@@ -84,506 +90,84 @@ mqtt:
     - logger.log:
         level: INFO
         format: "MQTT disconnected"
-  on_message:
-    - topic: "b2500/1/charge_mode/set"
-      then:
-        - b2500.set_charge_mode:
-            id: b2500_1
-            charge_mode: !lambda "return x;"
-    - topic: "b2500/1/smartmeter/enabled/set"
-      then:
-        - b2500.set_adaptive_mode_enabled:
-            id: b2500_1
-            generation: 2
-            enabled: !lambda 'return x == "ON";'
-    - topic: "b2500/2/charge_mode/set"
-      then:
-        - b2500.set_charge_mode:
-            id: b2500_2
-            charge_mode: !lambda "return x;"
-    - topic: "b2500/2/smartmeter/enabled/set"
-      then:
-        - b2500.set_adaptive_mode_enabled:
-            id: b2500_2
-            generation: 2
-            enabled: !lambda 'return x == "ON";'
-  on_json_message:
-    - topic: "b2500/1/timer/set"
-      then:
-        - b2500.set_timer:
-            id: b2500_1
-            generation: 2
-            timer: 0
-            enabled: !lambda 'return x["enabled"].is<bool>() ? make_optional(x["enabled"].as<bool>()) : optional<bool>();'
-            output_power: !lambda 'return x["outputPower"].is<int>() ? x["outputPower"].as<int>() : optional<int>();'
-            start_hour: !lambda 'return x["start"]["hour"].is<int>() ? x["start"]["hour"].as<int>() : optional<int>();'
-            start_minute: !lambda 'return x["start"]["minute"].is<int>() ? x["start"]["minute"].as<int>() : optional<int>();'
-            end_hour: !lambda 'return x["end"]["hour"].is<int>() ? x["end"]["hour"].as<int>() : optional<int>();'
-            end_minute: !lambda 'return x["end"]["minute"].is<int>() ? x["end"]["minute"].as<int>() : optional<int>();'
-    - topic: "b2500/1/timer/set"
-      then:
-        - b2500.set_timer:
-            id: b2500_1
-            generation: 2
-            timer: 1
-            enabled: !lambda 'return x["enabled"].is<bool>() ? make_optional(x["enabled"].as<bool>()) : optional<bool>();'
-            output_power: !lambda 'return x["outputPower"].is<int>() ? x["outputPower"].as<int>() : optional<int>();'
-            start_hour: !lambda 'return x["start"]["hour"].is<int>() ? x["start"]["hour"].as<int>() : optional<int>();'
-            start_minute: !lambda 'return x["start"]["minute"].is<int>() ? x["start"]["minute"].as<int>() : optional<int>();'
-            end_hour: !lambda 'return x["end"]["hour"].is<int>() ? x["end"]["hour"].as<int>() : optional<int>();'
-            end_minute: !lambda 'return x["end"]["minute"].is<int>() ? x["end"]["minute"].as<int>() : optional<int>();'
-    - topic: "b2500/1/timer/set"
-      then:
-        - b2500.set_timer:
-            id: b2500_1
-            generation: 2
-            timer: 2
-            enabled: !lambda 'return x["enabled"].is<bool>() ? make_optional(x["enabled"].as<bool>()) : optional<bool>();'
-            output_power: !lambda 'return x["outputPower"].is<int>() ? x["outputPower"].as<int>() : optional<int>();'
-            start_hour: !lambda 'return x["start"]["hour"].is<int>() ? x["start"]["hour"].as<int>() : optional<int>();'
-            start_minute: !lambda 'return x["start"]["minute"].is<int>() ? x["start"]["minute"].as<int>() : optional<int>();'
-            end_hour: !lambda 'return x["end"]["hour"].is<int>() ? x["end"]["hour"].as<int>() : optional<int>();'
-            end_minute: !lambda 'return x["end"]["minute"].is<int>() ? x["end"]["minute"].as<int>() : optional<int>();'
-    - topic: "b2500/1/timer/set"
-      then:
-        - b2500.set_timer:
-            id: b2500_1
-            generation: 2
-            timer: 3
-            enabled: !lambda 'return x["enabled"].is<bool>() ? make_optional(x["enabled"].as<bool>()) : optional<bool>();'
-            output_power: !lambda 'return x["outputPower"].is<int>() ? x["outputPower"].as<int>() : optional<int>();'
-            start_hour: !lambda 'return x["start"]["hour"].is<int>() ? x["start"]["hour"].as<int>() : optional<int>();'
-            start_minute: !lambda 'return x["start"]["minute"].is<int>() ? x["start"]["minute"].as<int>() : optional<int>();'
-            end_hour: !lambda 'return x["end"]["hour"].is<int>() ? x["end"]["hour"].as<int>() : optional<int>();'
-            end_minute: !lambda 'return x["end"]["minute"].is<int>() ? x["end"]["minute"].as<int>() : optional<int>();'
-    - topic: "b2500/1/timer/set"
-      then:
-        - b2500.set_timer:
-            id: b2500_1
-            generation: 2
-            timer: 4
-            enabled: !lambda 'return x["enabled"].is<bool>() ? make_optional(x["enabled"].as<bool>()) : optional<bool>();'
-            output_power: !lambda 'return x["outputPower"].is<int>() ? x["outputPower"].as<int>() : optional<int>();'
-            start_hour: !lambda 'return x["start"]["hour"].is<int>() ? x["start"]["hour"].as<int>() : optional<int>();'
-            start_minute: !lambda 'return x["start"]["minute"].is<int>() ? x["start"]["minute"].as<int>() : optional<int>();'
-            end_hour: !lambda 'return x["end"]["hour"].is<int>() ? x["end"]["hour"].as<int>() : optional<int>();'
-            end_minute: !lambda 'return x["end"]["minute"].is<int>() ? x["end"]["minute"].as<int>() : optional<int>();'
-    - topic: "b2500/2/timer/set"
-      then:
-        - b2500.set_timer:
-            id: b2500_2
-            generation: 2
-            timer: 0
-            enabled: !lambda 'return x["enabled"].is<bool>() ? make_optional(x["enabled"].as<bool>()) : optional<bool>();'
-            output_power: !lambda 'return x["outputPower"].is<int>() ? x["outputPower"].as<int>() : optional<int>();'
-            start_hour: !lambda 'return x["start"]["hour"].is<int>() ? x["start"]["hour"].as<int>() : optional<int>();'
-            start_minute: !lambda 'return x["start"]["minute"].is<int>() ? x["start"]["minute"].as<int>() : optional<int>();'
-            end_hour: !lambda 'return x["end"]["hour"].is<int>() ? x["end"]["hour"].as<int>() : optional<int>();'
-            end_minute: !lambda 'return x["end"]["minute"].is<int>() ? x["end"]["minute"].as<int>() : optional<int>();'
-    - topic: "b2500/2/timer/set"
-      then:
-        - b2500.set_timer:
-            id: b2500_2
-            generation: 2
-            timer: 1
-            enabled: !lambda 'return x["enabled"].is<bool>() ? make_optional(x["enabled"].as<bool>()) : optional<bool>();'
-            output_power: !lambda 'return x["outputPower"].is<int>() ? x["outputPower"].as<int>() : optional<int>();'
-            start_hour: !lambda 'return x["start"]["hour"].is<int>() ? x["start"]["hour"].as<int>() : optional<int>();'
-            start_minute: !lambda 'return x["start"]["minute"].is<int>() ? x["start"]["minute"].as<int>() : optional<int>();'
-            end_hour: !lambda 'return x["end"]["hour"].is<int>() ? x["end"]["hour"].as<int>() : optional<int>();'
-            end_minute: !lambda 'return x["end"]["minute"].is<int>() ? x["end"]["minute"].as<int>() : optional<int>();'
-    - topic: "b2500/2/timer/set"
-      then:
-        - b2500.set_timer:
-            id: b2500_2
-            generation: 2
-            timer: 2
-            enabled: !lambda 'return x["enabled"].is<bool>() ? make_optional(x["enabled"].as<bool>()) : optional<bool>();'
-            output_power: !lambda 'return x["outputPower"].is<int>() ? x["outputPower"].as<int>() : optional<int>();'
-            start_hour: !lambda 'return x["start"]["hour"].is<int>() ? x["start"]["hour"].as<int>() : optional<int>();'
-            start_minute: !lambda 'return x["start"]["minute"].is<int>() ? x["start"]["minute"].as<int>() : optional<int>();'
-            end_hour: !lambda 'return x["end"]["hour"].is<int>() ? x["end"]["hour"].as<int>() : optional<int>();'
-            end_minute: !lambda 'return x["end"]["minute"].is<int>() ? x["end"]["minute"].as<int>() : optional<int>();'
-    - topic: "b2500/2/timer/set"
-      then:
-        - b2500.set_timer:
-            id: b2500_2
-            generation: 2
-            timer: 3
-            enabled: !lambda 'return x["enabled"].is<bool>() ? make_optional(x["enabled"].as<bool>()) : optional<bool>();'
-            output_power: !lambda 'return x["outputPower"].is<int>() ? x["outputPower"].as<int>() : optional<int>();'
-            start_hour: !lambda 'return x["start"]["hour"].is<int>() ? x["start"]["hour"].as<int>() : optional<int>();'
-            start_minute: !lambda 'return x["start"]["minute"].is<int>() ? x["start"]["minute"].as<int>() : optional<int>();'
-            end_hour: !lambda 'return x["end"]["hour"].is<int>() ? x["end"]["hour"].as<int>() : optional<int>();'
-            end_minute: !lambda 'return x["end"]["minute"].is<int>() ? x["end"]["minute"].as<int>() : optional<int>();'
-    - topic: "b2500/2/timer/set"
-      then:
-        - b2500.set_timer:
-            id: b2500_2
-            generation: 2
-            timer: 4
-            enabled: !lambda 'return x["enabled"].is<bool>() ? make_optional(x["enabled"].as<bool>()) : optional<bool>();'
-            output_power: !lambda 'return x["outputPower"].is<int>() ? x["outputPower"].as<int>() : optional<int>();'
-            start_hour: !lambda 'return x["start"]["hour"].is<int>() ? x["start"]["hour"].as<int>() : optional<int>();'
-            start_minute: !lambda 'return x["start"]["minute"].is<int>() ? x["start"]["minute"].as<int>() : optional<int>();'
-            end_hour: !lambda 'return x["end"]["hour"].is<int>() ? x["end"]["hour"].as<int>() : optional<int>();'
-            end_minute: !lambda 'return x["end"]["minute"].is<int>() ? x["end"]["minute"].as<int>() : optional<int>();'
 
 b2500:
   - id: b2500_1
     generation: 2
     update_interval: 5s
     ble_client_id: b2500_ble_client_1
-    on_device_info:
-      then:
-        - lambda: |-
-            auto device_info_json = json::build_json([x](JsonObject root) {
-              root["type"] = x.type;
-              root["id"] = x.id;
-              root["mac"] = x.mac;
-            });
-            id(mqtt_client).publish("b2500/1/device", device_info_json);
-    on_runtime_info:
-      then:
-        - lambda: |-
-            auto runtime_info_json = json::build_json([x](JsonObject root) {
-              auto in1 = root.createNestedObject("in1");
-              in1["active"] = x.in1_active.active == 1;
-              in1["transparent"] = x.in1_active.transparent == 1;
-              in1["power"] = x.in1_power;
-              
-              auto in2 = root.createNestedObject("in2");
-              in2["active"] = x.in2_active.active == 1;
-              in2["transparent"] = x.in2_active.transparent == 1;
-              in2["power"] = x.in2_power;
-
-              root["soc"] = x.soc;
-              root["capacity"] = x.remaining_capacity;
-
-              root["deviceVersion"] = x.dev_version;
-              if (x.charge_mode.load_first) {
-                root["chargeMode"] = "LoadFirst";
-              } else {
-                root["chargeMode"] = "SimultaneousChargeAndDischarge";
-              }
-
-              auto out1 = root.createNestedObject("out1");
-              out1["active"] = x.out1_active == 1;
-              out1["power"] = x.out1_power;
-              out1["enabled"] = x.discharge_setting.out1_enable == 1;
-              
-              auto out2 = root.createNestedObject("out2");
-              out2["active"] = x.out2_active == 1;
-              out2["power"] = x.out2_power;
-              out2["enabled"] = x.discharge_setting.out2_enable == 1;
-
-              root["dod"] = x.dod;
-              root["wifiConnected"] = x.wifi_mqtt_state.wifi_connected == 1;
-              root["mqttConnected"] = x.wifi_mqtt_state.mqtt_connected == 1;
-
-              root["dischargeThreshold"] = x.discharge_threshold;
-              switch (x.device_scene) {
-                case DeviceScene::SCENE_DAY:
-                  root["scene"] = "DAY";
-                  break;
-                case DeviceScene::SCENE_NIGHT:
-                  root["scene"] = "NIGHT";
-                  break;
-                case DeviceScene::SCENE_DUSK_DAWN:
-                  root["scene"] = "DUSK_DAWN";
-                  break;
-                case DeviceScene::SCENE_UNKNOWN:
-                  root["scene"] = "UNKNOWN";
-                  break;
-              }
-
-              switch (x.device_region) {
-                case DeviceRegion::REGION_EU:
-                  root["region"] = "EU";
-                  break;
-                case DeviceRegion::REGION_CHINA:
-                  root["region"] = "CHINA";
-                  break;
-                case DeviceRegion::REGION_NON_EU:
-                  root["region"] = "NON_EU";
-                  break;
-                case DeviceRegion::REGION_NOT_SET:
-                  root["region"] = "NOT_SET";
-                  break;
-                case DeviceRegion::REGION_UNKNOWN:
-                  root["region"] = "UNKNOWN";
-                  break;
-              }
-
-              auto ext = root.createNestedObject("extern");
-              ext["connected1"] = x.extern1_connected == 1;
-              ext["connected2"] = x.extern2_connected == 1;
-
-              auto hour = x.time.hour;
-              auto minute = x.time.minute;
-              char buffer[8];
-              sprintf(buffer, "%02d:%02d", hour, minute);
-              auto time_str = std::string(buffer);
-              root["time"] = time_str;
-
-              auto temperature = root.createNestedObject("temperature");
-              temperature["low"] = x.temperature_low;
-              temperature["high"] = x.temperature_high;
-              auto energy = root.createNestedObject("dailyTotalEnergy");
-              energy["batteryCharge"] = x.daily_total_battery_charge;
-              energy["batteryDischarge"] = x.daily_total_battery_discharge;
-              energy["loadCharge"] = x.daily_total_load_charge;
-              energy["loadDischarge"] = x.daily_total_load_discharge;
-            });
-            id(mqtt_client).publish("b2500/1/runtime", runtime_info_json);
     on_cell_info:
       then:
         - lambda: |-
-            auto cell_info_json = json::build_json([x](JsonObject root) {
-              auto cell_info = x;
-              auto min = cell_info.cell_voltages[0];
-              auto max = cell_info.cell_voltages[0];
-              int sum = 0;
-              JsonArray cells = root.createNestedArray("cells");
-              for (int i = 0; i < 14; i++) {
-                cells.add(cell_info.cell_voltages[i] / 1000.0);
-                if (cell_info.cell_voltages[i] < min) {
-                  min = cell_info.cell_voltages[i];
-                }
-                if (cell_info.cell_voltages[i] > max) {
-                  max = cell_info.cell_voltages[i];
-                }
-                sum += cell_info.cell_voltages[i];
+            auto min = x.cell_voltages[0];
+            auto max = x.cell_voltages[0];
+            int sum = 0;
+            for (int i = 0; i < 14; i++) {
+              sum += x.cell_voltages[i];
+              if (x.cell_voltages[i] < min) {
+                min = x.cell_voltages[i];
               }
-              root["min"] = (min / 1000.0);
-              root["max"] = (max / 1000.0);
-              root["avg"] = ((sum / 14.0) / 1000.0);
-              root["sum"] = (sum / 1000.0);
-              root["delta"] = ((max - min) / 1000.0);
-            });
-            id(mqtt_client).publish("b2500/1/cell", cell_info_json);
-    on_wifi_info:
-      then:
-        - lambda: |-
-            auto wifi_info_json = json::build_json([x](JsonObject root) {
-              root["ssid"] = x.ssid;
-              root["rssi"] = x.signal;
-            });
-            id(mqtt_client).publish("b2500/1/wifi", wifi_info_json);
-    on_fc41d_info:
-      then:
-        - lambda: |-
-            auto fc41d_info_json = json::build_json([x](JsonObject root) {
-              root["version"] = x.firmware;
-            });
-            id(mqtt_client).publish("b2500/1/fc41d", fc41d_info_json);
-    on_timer_info:
-      then:
-        - lambda: |-
-            auto timer_info_json = json::build_json([x](JsonObject root) {
-              root["adaptiveModeEnabled"] = x.base.adaptive_mode_enabled == 1;
-              auto smart_meter = root.createNestedObject("smartMeter");
-              smart_meter["connected"] = x.base.smart_meter.connected == 1;
-              smart_meter["reading"] = x.base.smart_meter.meter_reading;
-              smart_meter["power"] = x.base.smart_meter.power_out;
-              smart_meter["unknown"] = x.base.smart_meter.unknown;
-
-              for (int i = 0; i < 5; i++) {
-                auto timer_json = root.createNestedObject("timer" + std::to_string(i + 1));
-                const esphome::b2500::TimerInfo* timer;
-                if (i < 3) {
-                  timer = &x.base.timer[i];
-                } else {
-                  timer = &x.additional_timers[i - 3];
-                }
-                timer_json["enabled"] = timer->enabled == 1;
-                timer_json["outputPower"] = timer->output_power;
-                auto start = timer_json.createNestedObject("start");
-                start["hour"] = timer->start.hour;
-                start["minute"] = timer->start.minute;
-                auto end = timer_json.createNestedObject("end");
-                end["hour"] = timer->end.hour;
-                end["minute"] = timer->end.minute;
+              if (x.cell_voltages[i] > max) {
+                max = x.cell_voltages[i];
               }
-            });
-            id(mqtt_client).publish("b2500/1/timer", timer_info_json);
+            }
+            id(b2500_device_cell_voltage_1_1).publish_state(x.cell_voltages[0] / 1000.0);
+            id(b2500_device_cell_voltage_1_2).publish_state(x.cell_voltages[1] / 1000.0);
+            id(b2500_device_cell_voltage_1_3).publish_state(x.cell_voltages[2] / 1000.0);
+            id(b2500_device_cell_voltage_1_4).publish_state(x.cell_voltages[3] / 1000.0);
+            id(b2500_device_cell_voltage_1_5).publish_state(x.cell_voltages[4] / 1000.0);
+            id(b2500_device_cell_voltage_1_6).publish_state(x.cell_voltages[5] / 1000.0);
+            id(b2500_device_cell_voltage_1_7).publish_state(x.cell_voltages[6] / 1000.0);
+            id(b2500_device_cell_voltage_1_8).publish_state(x.cell_voltages[7] / 1000.0);
+            id(b2500_device_cell_voltage_1_9).publish_state(x.cell_voltages[8] / 1000.0);
+            id(b2500_device_cell_voltage_1_10).publish_state(x.cell_voltages[9] / 1000.0);
+            id(b2500_device_cell_voltage_1_11).publish_state(x.cell_voltages[10] / 1000.0);
+            id(b2500_device_cell_voltage_1_12).publish_state(x.cell_voltages[11] / 1000.0);
+            id(b2500_device_cell_voltage_1_13).publish_state(x.cell_voltages[12] / 1000.0);
+            id(b2500_device_cell_voltage_1_14).publish_state(x.cell_voltages[13] / 1000.0);
+            id(b2500_device_cell_voltage_min_1).publish_state(min / 1000.0);
+            id(b2500_device_cell_voltage_max_1).publish_state(max / 1000.0);
+            id(b2500_device_cell_voltage_avg_1).publish_state((sum / 14.0) / 1000.0);
+            id(b2500_device_cell_voltage_sum_1).publish_state(sum / 1000.0);
+            id(b2500_device_cell_voltage_diff_1).publish_state((max - min) / 1000.0);
   - id: b2500_2
     generation: 2
     update_interval: 5s
     ble_client_id: b2500_ble_client_2
-    on_device_info:
-      then:
-        - lambda: |-
-            auto device_info_json = json::build_json([x](JsonObject root) {
-              root["type"] = x.type;
-              root["id"] = x.id;
-              root["mac"] = x.mac;
-            });
-            id(mqtt_client).publish("b2500/2/device", device_info_json);
-    on_runtime_info:
-      then:
-        - lambda: |-
-            auto runtime_info_json = json::build_json([x](JsonObject root) {
-              auto in1 = root.createNestedObject("in1");
-              in1["active"] = x.in1_active.active == 1;
-              in1["transparent"] = x.in1_active.transparent == 1;
-              in1["power"] = x.in1_power;
-              
-              auto in2 = root.createNestedObject("in2");
-              in2["active"] = x.in2_active.active == 1;
-              in2["transparent"] = x.in2_active.transparent == 1;
-              in2["power"] = x.in2_power;
-
-              root["soc"] = x.soc;
-              root["capacity"] = x.remaining_capacity;
-
-              root["deviceVersion"] = x.dev_version;
-              if (x.charge_mode.load_first) {
-                root["chargeMode"] = "LoadFirst";
-              } else {
-                root["chargeMode"] = "SimultaneousChargeAndDischarge";
-              }
-
-              auto out1 = root.createNestedObject("out1");
-              out1["active"] = x.out1_active == 1;
-              out1["power"] = x.out1_power;
-              out1["enabled"] = x.discharge_setting.out1_enable == 1;
-              
-              auto out2 = root.createNestedObject("out2");
-              out2["active"] = x.out2_active == 1;
-              out2["power"] = x.out2_power;
-              out2["enabled"] = x.discharge_setting.out2_enable == 1;
-
-              root["dod"] = x.dod;
-              root["wifiConnected"] = x.wifi_mqtt_state.wifi_connected == 1;
-              root["mqttConnected"] = x.wifi_mqtt_state.mqtt_connected == 1;
-
-              root["dischargeThreshold"] = x.discharge_threshold;
-              switch (x.device_scene) {
-                case DeviceScene::SCENE_DAY:
-                  root["scene"] = "DAY";
-                  break;
-                case DeviceScene::SCENE_NIGHT:
-                  root["scene"] = "NIGHT";
-                  break;
-                case DeviceScene::SCENE_DUSK_DAWN:
-                  root["scene"] = "DUSK_DAWN";
-                  break;
-                case DeviceScene::SCENE_UNKNOWN:
-                  root["scene"] = "UNKNOWN";
-                  break;
-              }
-
-              switch (x.device_region) {
-                case DeviceRegion::REGION_EU:
-                  root["region"] = "EU";
-                  break;
-                case DeviceRegion::REGION_CHINA:
-                  root["region"] = "CHINA";
-                  break;
-                case DeviceRegion::REGION_NON_EU:
-                  root["region"] = "NON_EU";
-                  break;
-                case DeviceRegion::REGION_NOT_SET:
-                  root["region"] = "NOT_SET";
-                  break;
-                case DeviceRegion::REGION_UNKNOWN:
-                  root["region"] = "UNKNOWN";
-                  break;
-              }
-
-              auto ext = root.createNestedObject("extern");
-              ext["connected1"] = x.extern1_connected == 1;
-              ext["connected2"] = x.extern2_connected == 1;
-
-              auto hour = x.time.hour;
-              auto minute = x.time.minute;
-              char buffer[8];
-              sprintf(buffer, "%02d:%02d", hour, minute);
-              auto time_str = std::string(buffer);
-              root["time"] = time_str;
-
-              auto temperature = root.createNestedObject("temperature");
-              temperature["low"] = x.temperature_low;
-              temperature["high"] = x.temperature_high;
-              auto energy = root.createNestedObject("dailyTotalEnergy");
-              energy["batteryCharge"] = x.daily_total_battery_charge;
-              energy["batteryDischarge"] = x.daily_total_battery_discharge;
-              energy["loadCharge"] = x.daily_total_load_charge;
-              energy["loadDischarge"] = x.daily_total_load_discharge;
-            });
-            id(mqtt_client).publish("b2500/2/runtime", runtime_info_json);
     on_cell_info:
       then:
         - lambda: |-
-            auto cell_info_json = json::build_json([x](JsonObject root) {
-              auto cell_info = x;
-              auto min = cell_info.cell_voltages[0];
-              auto max = cell_info.cell_voltages[0];
-              int sum = 0;
-              JsonArray cells = root.createNestedArray("cells");
-              for (int i = 0; i < 14; i++) {
-                cells.add(cell_info.cell_voltages[i] / 1000.0);
-                if (cell_info.cell_voltages[i] < min) {
-                  min = cell_info.cell_voltages[i];
-                }
-                if (cell_info.cell_voltages[i] > max) {
-                  max = cell_info.cell_voltages[i];
-                }
-                sum += cell_info.cell_voltages[i];
+            auto min = x.cell_voltages[0];
+            auto max = x.cell_voltages[0];
+            int sum = 0;
+            for (int i = 0; i < 14; i++) {
+              sum += x.cell_voltages[i];
+              if (x.cell_voltages[i] < min) {
+                min = x.cell_voltages[i];
               }
-              root["min"] = (min / 1000.0);
-              root["max"] = (max / 1000.0);
-              root["avg"] = ((sum / 14.0) / 1000.0);
-              root["sum"] = (sum / 1000.0);
-              root["delta"] = ((max - min) / 1000.0);
-            });
-            id(mqtt_client).publish("b2500/2/cell", cell_info_json);
-    on_wifi_info:
-      then:
-        - lambda: |-
-            auto wifi_info_json = json::build_json([x](JsonObject root) {
-              root["ssid"] = x.ssid;
-              root["rssi"] = x.signal;
-            });
-            id(mqtt_client).publish("b2500/2/wifi", wifi_info_json);
-    on_fc41d_info:
-      then:
-        - lambda: |-
-            auto fc41d_info_json = json::build_json([x](JsonObject root) {
-              root["version"] = x.firmware;
-            });
-            id(mqtt_client).publish("b2500/2/fc41d", fc41d_info_json);
-    on_timer_info:
-      then:
-        - lambda: |-
-            auto timer_info_json = json::build_json([x](JsonObject root) {
-              root["adaptiveModeEnabled"] = x.base.adaptive_mode_enabled == 1;
-              auto smart_meter = root.createNestedObject("smartMeter");
-              smart_meter["connected"] = x.base.smart_meter.connected == 1;
-              smart_meter["reading"] = x.base.smart_meter.meter_reading;
-              smart_meter["power"] = x.base.smart_meter.power_out;
-              smart_meter["unknown"] = x.base.smart_meter.unknown;
-
-              for (int i = 0; i < 5; i++) {
-                auto timer_json = root.createNestedObject("timer" + std::to_string(i + 1));
-                const esphome::b2500::TimerInfo* timer;
-                if (i < 3) {
-                  timer = &x.base.timer[i];
-                } else {
-                  timer = &x.additional_timers[i - 3];
-                }
-                timer_json["enabled"] = timer->enabled == 1;
-                timer_json["outputPower"] = timer->output_power;
-                auto start = timer_json.createNestedObject("start");
-                start["hour"] = timer->start.hour;
-                start["minute"] = timer->start.minute;
-                auto end = timer_json.createNestedObject("end");
-                end["hour"] = timer->end.hour;
-                end["minute"] = timer->end.minute;
+              if (x.cell_voltages[i] > max) {
+                max = x.cell_voltages[i];
               }
-            });
-            id(mqtt_client).publish("b2500/2/timer", timer_info_json);
+            }
+            id(b2500_device_cell_voltage_2_1).publish_state(x.cell_voltages[0] / 1000.0);
+            id(b2500_device_cell_voltage_2_2).publish_state(x.cell_voltages[1] / 1000.0);
+            id(b2500_device_cell_voltage_2_3).publish_state(x.cell_voltages[2] / 1000.0);
+            id(b2500_device_cell_voltage_2_4).publish_state(x.cell_voltages[3] / 1000.0);
+            id(b2500_device_cell_voltage_2_5).publish_state(x.cell_voltages[4] / 1000.0);
+            id(b2500_device_cell_voltage_2_6).publish_state(x.cell_voltages[5] / 1000.0);
+            id(b2500_device_cell_voltage_2_7).publish_state(x.cell_voltages[6] / 1000.0);
+            id(b2500_device_cell_voltage_2_8).publish_state(x.cell_voltages[7] / 1000.0);
+            id(b2500_device_cell_voltage_2_9).publish_state(x.cell_voltages[8] / 1000.0);
+            id(b2500_device_cell_voltage_2_10).publish_state(x.cell_voltages[9] / 1000.0);
+            id(b2500_device_cell_voltage_2_11).publish_state(x.cell_voltages[10] / 1000.0);
+            id(b2500_device_cell_voltage_2_12).publish_state(x.cell_voltages[11] / 1000.0);
+            id(b2500_device_cell_voltage_2_13).publish_state(x.cell_voltages[12] / 1000.0);
+            id(b2500_device_cell_voltage_2_14).publish_state(x.cell_voltages[13] / 1000.0);
+            id(b2500_device_cell_voltage_min_2).publish_state(min / 1000.0);
+            id(b2500_device_cell_voltage_max_2).publish_state(max / 1000.0);
+            id(b2500_device_cell_voltage_avg_2).publish_state((sum / 14.0) / 1000.0);
+            id(b2500_device_cell_voltage_sum_2).publish_state(sum / 1000.0);
+            id(b2500_device_cell_voltage_diff_2).publish_state((max - min) / 1000.0);
 
 time:
   - platform: sntp
@@ -689,13 +273,220 @@ button:
       device_id: b2500_device_2
       command_topic: "b2500/2/hardware_reset/set"
       disabled_by_default: True
+datetime:
+  - platform: b2500
+    b2500_id: b2500_1
+    generation: 2
+    timer1_start:
+      id: b2500_timer1_time_start_1
+      name: "B2500 - 1 - B2500: Timer 1 Start Time"
+      device_id: b2500_device_1
+      state_topic: "b2500/1/timer/1/start"
+      command_topic: "b2500/1/timer/1/start/set"
+    timer1_end:
+      id: b2500_timer1_time_end_1
+      name: "B2500 - 1 - B2500: Timer 1 End Time"
+      device_id: b2500_device_1
+      state_topic: "b2500/1/timer/1/end"
+      command_topic: "b2500/1/timer/1/end/set"
+    timer2_start:
+      id: b2500_timer2_time_start_1
+      name: "B2500 - 1 - B2500: Timer 2 Start Time"
+      device_id: b2500_device_1
+      state_topic: "b2500/1/timer/2/start"
+      command_topic: "b2500/1/timer/2/start/set"
+    timer2_end:
+      id: b2500_timer2_time_end_1
+      name: "B2500 - 1 - B2500: Timer 2 End Time"
+      device_id: b2500_device_1
+      state_topic: "b2500/1/timer/2/end"
+      command_topic: "b2500/1/timer/2/end/set"
+    timer3_start:
+      id: b2500_timer3_time_start_1
+      name: "B2500 - 1 - B2500: Timer 3 Start Time"
+      device_id: b2500_device_1
+      state_topic: "b2500/1/timer/3/start"
+      command_topic: "b2500/1/timer/3/start/set"
+    timer3_end:
+      id: b2500_timer3_time_end_1
+      name: "B2500 - 1 - B2500: Timer 3 End Time"
+      device_id: b2500_device_1
+      state_topic: "b2500/1/timer/3/end"
+      command_topic: "b2500/1/timer/3/end/set"
+    timer4_start:
+      id: b2500_timer4_time_start_1
+      name: "B2500 - 1 - B2500: Timer 4 Start Time"
+      device_id: b2500_device_1
+      state_topic: "b2500/1/timer/4/start"
+      command_topic: "b2500/1/timer/4/start/set"
+    timer4_end:
+      id: b2500_timer4_time_end_1
+      name: "B2500 - 1 - B2500: Timer 4 End Time"
+      device_id: b2500_device_1
+      state_topic: "b2500/1/timer/4/end"
+      command_topic: "b2500/1/timer/4/end/set"
+    timer5_start:
+      id: b2500_timer5_time_start_1
+      name: "B2500 - 1 - B2500: Timer 5 Start Time"
+      device_id: b2500_device_1
+      state_topic: "b2500/1/timer/5/start"
+      command_topic: "b2500/1/timer/5/start/set"
+    timer5_end:
+      id: b2500_timer5_time_end_1
+      name: "B2500 - 1 - B2500: Timer 5 End Time"
+      device_id: b2500_device_1
+      state_topic: "b2500/1/timer/5/end"
+      command_topic: "b2500/1/timer/5/end/set"
+  - platform: b2500
+    b2500_id: b2500_2
+    generation: 2
+    timer1_start:
+      id: b2500_timer1_time_start_2
+      name: "B2500 - 2 - B2500D: Timer 1 Start Time"
+      device_id: b2500_device_2
+      state_topic: "b2500/2/timer/1/start"
+      command_topic: "b2500/2/timer/1/start/set"
+    timer1_end:
+      id: b2500_timer1_time_end_2
+      name: "B2500 - 2 - B2500D: Timer 1 End Time"
+      device_id: b2500_device_2
+      state_topic: "b2500/2/timer/1/end"
+      command_topic: "b2500/2/timer/1/end/set"
+    timer2_start:
+      id: b2500_timer2_time_start_2
+      name: "B2500 - 2 - B2500D: Timer 2 Start Time"
+      device_id: b2500_device_2
+      state_topic: "b2500/2/timer/2/start"
+      command_topic: "b2500/2/timer/2/start/set"
+    timer2_end:
+      id: b2500_timer2_time_end_2
+      name: "B2500 - 2 - B2500D: Timer 2 End Time"
+      device_id: b2500_device_2
+      state_topic: "b2500/2/timer/2/end"
+      command_topic: "b2500/2/timer/2/end/set"
+    timer3_start:
+      id: b2500_timer3_time_start_2
+      name: "B2500 - 2 - B2500D: Timer 3 Start Time"
+      device_id: b2500_device_2
+      state_topic: "b2500/2/timer/3/start"
+      command_topic: "b2500/2/timer/3/start/set"
+    timer3_end:
+      id: b2500_timer3_time_end_2
+      name: "B2500 - 2 - B2500D: Timer 3 End Time"
+      device_id: b2500_device_2
+      state_topic: "b2500/2/timer/3/end"
+      command_topic: "b2500/2/timer/3/end/set"
+    timer4_start:
+      id: b2500_timer4_time_start_2
+      name: "B2500 - 2 - B2500D: Timer 4 Start Time"
+      device_id: b2500_device_2
+      state_topic: "b2500/2/timer/4/start"
+      command_topic: "b2500/2/timer/4/start/set"
+    timer4_end:
+      id: b2500_timer4_time_end_2
+      name: "B2500 - 2 - B2500D: Timer 4 End Time"
+      device_id: b2500_device_2
+      state_topic: "b2500/2/timer/4/end"
+      command_topic: "b2500/2/timer/4/end/set"
+    timer5_start:
+      id: b2500_timer5_time_start_2
+      name: "B2500 - 2 - B2500D: Timer 5 Start Time"
+      device_id: b2500_device_2
+      state_topic: "b2500/2/timer/5/start"
+      command_topic: "b2500/2/timer/5/start/set"
+    timer5_end:
+      id: b2500_timer5_time_end_2
+      name: "B2500 - 2 - B2500D: Timer 5 End Time"
+      device_id: b2500_device_2
+      state_topic: "b2500/2/timer/5/end"
+      command_topic: "b2500/2/timer/5/end/set"
+
+number:
+  - platform: b2500
+    b2500_id: b2500_1
+    generation: 2
+    dod:
+      id: b2500_battery_dod_1
+      name: "B2500 - 1 - B2500: Depth of Discharge"
+      device_id: b2500_device_1
+      state_topic: "b2500/1/battery/dod"
+      command_topic: "b2500/1/battery/dod/set"
+    timer1_output_power:
+      id: b2500_timer1_power_1
+      name: "B2500 - 1 - B2500: Timer 1 Output Power"
+      device_id: b2500_device_1
+      state_topic: "b2500/1/timer/1/power"
+      command_topic: "b2500/1/timer/1/power/set"
+    timer2_output_power:
+      id: b2500_timer2_power_1
+      name: "B2500 - 1 - B2500: Timer 2 Output Power"
+      device_id: b2500_device_1
+      state_topic: "b2500/1/timer/2/power"
+      command_topic: "b2500/1/timer/2/power/set"
+    timer3_output_power:
+      id: b2500_timer3_power_1
+      name: "B2500 - 1 - B2500: Timer 3 Output Power"
+      device_id: b2500_device_1
+      state_topic: "b2500/1/timer/3/power"
+      command_topic: "b2500/1/timer/3/power/set"
+    timer4_output_power:
+      id: b2500_timer4_power_1
+      name: "B2500 - 1 - B2500: Timer 4 Output Power"
+      device_id: b2500_device_1
+      state_topic: "b2500/1/timer/4/power"
+      command_topic: "b2500/1/timer/4/power/set"
+    timer5_output_power:
+      id: b2500_timer5_power_1
+      name: "B2500 - 1 - B2500: Timer 5 Output Power"
+      device_id: b2500_device_1
+      state_topic: "b2500/1/timer/5/power"
+      command_topic: "b2500/1/timer/5/power/set"
+  - platform: b2500
+    b2500_id: b2500_2
+    generation: 2
+    dod:
+      id: b2500_battery_dod_2
+      name: "B2500 - 2 - B2500D: Depth of Discharge"
+      device_id: b2500_device_2
+      state_topic: "b2500/2/battery/dod"
+      command_topic: "b2500/2/battery/dod/set"
+    timer1_output_power:
+      id: b2500_timer1_power_2
+      name: "B2500 - 2 - B2500D: Timer 1 Output Power"
+      device_id: b2500_device_2
+      state_topic: "b2500/2/timer/1/power"
+      command_topic: "b2500/2/timer/1/power/set"
+    timer2_output_power:
+      id: b2500_timer2_power_2
+      name: "B2500 - 2 - B2500D: Timer 2 Output Power"
+      device_id: b2500_device_2
+      state_topic: "b2500/2/timer/2/power"
+      command_topic: "b2500/2/timer/2/power/set"
+    timer3_output_power:
+      id: b2500_timer3_power_2
+      name: "B2500 - 2 - B2500D: Timer 3 Output Power"
+      device_id: b2500_device_2
+      state_topic: "b2500/2/timer/3/power"
+      command_topic: "b2500/2/timer/3/power/set"
+    timer4_output_power:
+      id: b2500_timer4_power_2
+      name: "B2500 - 2 - B2500D: Timer 4 Output Power"
+      device_id: b2500_device_2
+      state_topic: "b2500/2/timer/4/power"
+      command_topic: "b2500/2/timer/4/power/set"
+    timer5_output_power:
+      id: b2500_timer5_power_2
+      name: "B2500 - 2 - B2500D: Timer 5 Output Power"
+      device_id: b2500_device_2
+      state_topic: "b2500/2/timer/5/power"
+      command_topic: "b2500/2/timer/5/power/set"
 
 
 switch:
   - platform: ble_client
     ble_client_id: b2500_ble_client_1
-    id: b2500_bluetooth_enabled_1
     name: "B2500 - 1 - B2500: Bluetooth Enabled"
+    id: b2500_bluetooth_enabled_1
     device_id: b2500_device_1
     state_topic: "b2500/1/bluetooth/enabled"
     command_topic: "b2500/1/bluetooth/enabled/set"
@@ -703,6 +494,36 @@ switch:
   - platform: b2500
     b2500_id: b2500_1
     generation: 2
+    timer1_enabled:
+      id: b2500_timer1_enabled_1
+      name: "B2500 - 1 - B2500: Timer 1 Enabled"
+      device_id: b2500_device_1
+      state_topic: "b2500/1/timer/1/enabled"
+      command_topic: "b2500/1/timer/1/enabled/set"
+    timer2_enabled:
+      id: b2500_timer2_enabled_1
+      name: "B2500 - 1 - B2500: Timer 2 Enabled"
+      device_id: b2500_device_1
+      state_topic: "b2500/1/timer/2/enabled"
+      command_topic: "b2500/1/timer/2/enabled/set"
+    timer3_enabled:
+      id: b2500_timer3_enabled_1
+      name: "B2500 - 1 - B2500: Timer 3 Enabled"
+      device_id: b2500_device_1
+      state_topic: "b2500/1/timer/3/enabled"
+      command_topic: "b2500/1/timer/3/enabled/set"
+    timer4_enabled:
+      id: b2500_timer4_enabled_1
+      name: "B2500 - 1 - B2500: Timer 4 Enabled"
+      device_id: b2500_device_1
+      state_topic: "b2500/1/timer/4/enabled"
+      command_topic: "b2500/1/timer/4/enabled/set"
+    timer5_enabled:
+      id: b2500_timer5_enabled_1
+      name: "B2500 - 1 - B2500: Timer 5 Enabled"
+      device_id: b2500_device_1
+      state_topic: "b2500/1/timer/5/enabled"
+      command_topic: "b2500/1/timer/5/enabled/set"
     adaptive_mode:
       id: b2500_smartmeter_enabled_1
       name: "B2500 - 1 - B2500: SmartMeter Enabled"
@@ -717,8 +538,8 @@ switch:
       command_topic: "b2500/1/device/surplus_feed_in/set"
   - platform: ble_client
     ble_client_id: b2500_ble_client_2
-    id: b2500_bluetooth_enabled_2
     name: "B2500 - 2 - B2500D: Bluetooth Enabled"
+    id: b2500_bluetooth_enabled_2
     device_id: b2500_device_2
     state_topic: "b2500/2/bluetooth/enabled"
     command_topic: "b2500/2/bluetooth/enabled/set"
@@ -726,6 +547,36 @@ switch:
   - platform: b2500
     b2500_id: b2500_2
     generation: 2
+    timer1_enabled:
+      id: b2500_timer1_enabled_2
+      name: "B2500 - 2 - B2500D: Timer 1 Enabled"
+      device_id: b2500_device_2
+      state_topic: "b2500/2/timer/1/enabled"
+      command_topic: "b2500/2/timer/1/enabled/set"
+    timer2_enabled:
+      id: b2500_timer2_enabled_2
+      name: "B2500 - 2 - B2500D: Timer 2 Enabled"
+      device_id: b2500_device_2
+      state_topic: "b2500/2/timer/2/enabled"
+      command_topic: "b2500/2/timer/2/enabled/set"
+    timer3_enabled:
+      id: b2500_timer3_enabled_2
+      name: "B2500 - 2 - B2500D: Timer 3 Enabled"
+      device_id: b2500_device_2
+      state_topic: "b2500/2/timer/3/enabled"
+      command_topic: "b2500/2/timer/3/enabled/set"
+    timer4_enabled:
+      id: b2500_timer4_enabled_2
+      name: "B2500 - 2 - B2500D: Timer 4 Enabled"
+      device_id: b2500_device_2
+      state_topic: "b2500/2/timer/4/enabled"
+      command_topic: "b2500/2/timer/4/enabled/set"
+    timer5_enabled:
+      id: b2500_timer5_enabled_2
+      name: "B2500 - 2 - B2500D: Timer 5 Enabled"
+      device_id: b2500_device_2
+      state_topic: "b2500/2/timer/5/enabled"
+      command_topic: "b2500/2/timer/5/enabled/set"
     adaptive_mode:
       id: b2500_smartmeter_enabled_2
       name: "B2500 - 2 - B2500D: SmartMeter Enabled"
@@ -739,16 +590,352 @@ switch:
       state_topic: "b2500/2/device/surplus_feed_in"
       command_topic: "b2500/2/device/surplus_feed_in/set"
 
-binary_sensor:
+select:
+  - platform: b2500
+    b2500_id: b2500_1
+    generation: 2
+    charge_mode:
+      id: b2500_charge_mode_1
+      name: "B2500 - 1 - B2500: Charge Mode"
+      device_id: b2500_device_1
+      state_topic: "b2500/1/battery/charge_mode"
+      command_topic: "b2500/1/battery/charge_mode/set"
+  - platform: b2500
+    b2500_id: b2500_2
+    generation: 2
+    charge_mode:
+      id: b2500_charge_mode_2
+      name: "B2500 - 2 - B2500D: Charge Mode"
+      device_id: b2500_device_2
+      state_topic: "b2500/2/battery/charge_mode"
+      command_topic: "b2500/2/battery/charge_mode/set"
+
+text_sensor:
   - platform: template
-    id: b2500_device_ble_ok_1
+    name: "B2500 - 1 - B2500: Generation"
+    id: b2500_device_generation_1
+    device_id: b2500_device_1
+    state_topic: "b2500/1/device/generation"
+    icon: mdi:devices
+  - platform: template
+    name: "B2500 - 1 - B2500: Name"
+    id: b2500_device_name_1
+    device_id: b2500_device_1
+    state_topic: "b2500/1/device/name"
+    icon: mdi:devices
+  - platform: b2500
+    b2500_id: b2500_1
+    generation: 2
+    device_type:
+      name: "B2500 - 1 - B2500: Device Type"
+      id: b2500_device_type_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/device/type"
+      icon: mdi:devices
+    device_id:
+      name: "B2500 - 1 - B2500: Device ID"
+      id: b2500_device_id_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/device/id"
+      icon: mdi:identifier
+
+    device_time:
+      name: "B2500 - 1 - B2500: Device Time"
+      id: b2500_device_time_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/device/time"
+      retain: false
+      icon: mdi:clock
+
+    firmware_version:
+      name: "B2500 - 1 - B2500: Device Firmware Version"
+      id: b2500_device_fw_version_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/device/fw_version"
+      icon: mdi:chip
+    mac_address:
+      name: "B2500 - 1 - B2500: MAC Address"
+      id: b2500_device_ble_mac_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/device/ble_mac"
+      icon: mdi:network
+    wifi_ssid:
+      name: "B2500 - 1 - B2500: Wifi SSID"
+      id: b2500_device_wifi_ssid_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/device/wifi_ssid"
+      icon: mdi:wifi
+    fc41d_version:
+      name: "B2500 - 1 - B2500: FC41D-Firmware"
+      id: b2500_device_fc41d_fw_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/device/fc41d_fw"
+      icon: mdi:chip
+    scene:
+      name: "B2500 - 1 - B2500: Scene"
+      id: b2500_device_scene_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/device/scene"
+      icon: mdi:theme-light-dark
+    region:
+      name: "B2500 - 1 - B2500: Region"
+      id: b2500_device_region_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/device/region"
+      icon: mdi:earth
+    last_response:
+      name: "B2500 - 1 - B2500: Last Response"
+      id: b2500_device_last_response_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/device/last_response"
+      retain: false
+      icon: mdi:update
+    cell_voltage:
+      name: "B2500 - 1 - B2500: Cell Voltage"
+      id: b2500_device_cell_voltage_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/battery/cell_voltage"
+      retain: false
+      disabled_by_default: true
+      icon: mdi:battery
+  - platform: template
+    name: "B2500 - 2 - B2500D: Generation"
+    id: b2500_device_generation_2
+    device_id: b2500_device_2
+    state_topic: "b2500/2/device/generation"
+    icon: mdi:devices
+  - platform: template
+    name: "B2500 - 2 - B2500D: Name"
+    id: b2500_device_name_2
+    device_id: b2500_device_2
+    state_topic: "b2500/2/device/name"
+    icon: mdi:devices
+  - platform: b2500
+    b2500_id: b2500_2
+    generation: 2
+    device_type:
+      name: "B2500 - 2 - B2500D: Device Type"
+      id: b2500_device_type_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/device/type"
+      icon: mdi:devices
+    device_id:
+      name: "B2500 - 2 - B2500D: Device ID"
+      id: b2500_device_id_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/device/id"
+      icon: mdi:identifier
+
+    device_time:
+      name: "B2500 - 2 - B2500D: Device Time"
+      id: b2500_device_time_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/device/time"
+      retain: false
+      icon: mdi:clock
+
+    firmware_version:
+      name: "B2500 - 2 - B2500D: Device Firmware Version"
+      id: b2500_device_fw_version_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/device/fw_version"
+      icon: mdi:chip
+    mac_address:
+      name: "B2500 - 2 - B2500D: MAC Address"
+      id: b2500_device_ble_mac_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/device/ble_mac"
+      icon: mdi:network
+    wifi_ssid:
+      name: "B2500 - 2 - B2500D: Wifi SSID"
+      id: b2500_device_wifi_ssid_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/device/wifi_ssid"
+      icon: mdi:wifi
+    fc41d_version:
+      name: "B2500 - 2 - B2500D: FC41D-Firmware"
+      id: b2500_device_fc41d_fw_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/device/fc41d_fw"
+      icon: mdi:chip
+    scene:
+      name: "B2500 - 2 - B2500D: Scene"
+      id: b2500_device_scene_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/device/scene"
+      icon: mdi:theme-light-dark
+    region:
+      name: "B2500 - 2 - B2500D: Region"
+      id: b2500_device_region_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/device/region"
+      icon: mdi:earth
+    last_response:
+      name: "B2500 - 2 - B2500D: Last Response"
+      id: b2500_device_last_response_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/device/last_response"
+      retain: false
+      icon: mdi:update
+    cell_voltage:
+      name: "B2500 - 2 - B2500D: Cell Voltage"
+      id: b2500_device_cell_voltage_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/battery/cell_voltage"
+      retain: false
+      disabled_by_default: true
+      icon: mdi:battery
+
+binary_sensor:
+  - platform: b2500
+    b2500_id: b2500_1
+    generation: 2
+    in1_active:
+      name: "B2500 - 1 - B2500: PV 1 - Active"
+      id: b2500_pv1_active_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/pv1/active"
+      icon: mdi:solar-power
+    in2_active:
+      name: "B2500 - 1 - B2500: PV 2 - Active"
+      id: b2500_pv2_active_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/pv2/active"
+      icon: mdi:solar-power
+    in1_transparent:
+      name: "B2500 - 1 - B2500: PV 1 - Transparent"
+      id: b2500_pv1_transparent_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/pv1/transparent"
+      icon: mdi:transit-connection-variant
+    in2_transparent:
+      name: "B2500 - 1 - B2500: PV 2 - Transparent"
+      id: b2500_pv2_transparent_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/pv2/transparent"
+      icon: mdi:transit-connection-variant
+    wifi_connected:
+      name: "B2500 - 1 - B2500: Wifi Connected"
+      id: b2500_device_wifi_ok_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/device/wifi_ok"
+      icon: mdi:wifi
+    mqtt_connected:
+      name: "B2500 - 1 - B2500: MQTT Connected"
+      id: b2500_device_mqtt_ok_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/device/mqtt_ok"
+      icon: mdi:cloud
+    out1_active:
+      name: "B2500 - 1 - B2500: Out 1 - Active"
+      id: b2500_power1_active_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/power1/active"
+      icon: mdi:power-plug-battery
+    out2_active:
+      name: "B2500 - 1 - B2500: Out 2 - Active"
+      id: b2500_power2_active_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/power2/active"
+      icon: mdi:power-plug-battery
+    extern1_connected:
+      name: "B2500 - 1 - B2500: Extension 1 connected"
+      id: b2500_extern1_connected_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/extern1/connected"
+      icon: mdi:battery-plus
+    extern2_connected:
+      name: "B2500 - 1 - B2500: Extension 2 connected"
+      id: b2500_extern2_connected_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/extern2/connected"
+      icon: mdi:battery-plus
+    smart_meter_connected:
+      name: "B2500 - 1 - B2500: SmartMeter Connected"
+      id: b2500_smartmeter_connected_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/smartmeter/connected"
+      icon: mdi:meter-electric
+
+  - platform: template
     name: "B2500 - 1 - B2500: BLE Connected"
+    id: b2500_device_ble_ok_1
     device_id: b2500_device_1
     state_topic: "b2500/1/device/ble_ok"
     icon: mdi:bluetooth
+  - platform: b2500
+    b2500_id: b2500_2
+    generation: 2
+    in1_active:
+      name: "B2500 - 2 - B2500D: PV 1 - Active"
+      id: b2500_pv1_active_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/pv1/active"
+      icon: mdi:solar-power
+    in2_active:
+      name: "B2500 - 2 - B2500D: PV 2 - Active"
+      id: b2500_pv2_active_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/pv2/active"
+      icon: mdi:solar-power
+    in1_transparent:
+      name: "B2500 - 2 - B2500D: PV 1 - Transparent"
+      id: b2500_pv1_transparent_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/pv1/transparent"
+      icon: mdi:transit-connection-variant
+    in2_transparent:
+      name: "B2500 - 2 - B2500D: PV 2 - Transparent"
+      id: b2500_pv2_transparent_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/pv2/transparent"
+      icon: mdi:transit-connection-variant
+    wifi_connected:
+      name: "B2500 - 2 - B2500D: Wifi Connected"
+      id: b2500_device_wifi_ok_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/device/wifi_ok"
+      icon: mdi:wifi
+    mqtt_connected:
+      name: "B2500 - 2 - B2500D: MQTT Connected"
+      id: b2500_device_mqtt_ok_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/device/mqtt_ok"
+      icon: mdi:cloud
+    out1_active:
+      name: "B2500 - 2 - B2500D: Out 1 - Active"
+      id: b2500_power1_active_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/power1/active"
+      icon: mdi:power-plug-battery
+    out2_active:
+      name: "B2500 - 2 - B2500D: Out 2 - Active"
+      id: b2500_power2_active_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/power2/active"
+      icon: mdi:power-plug-battery
+    extern1_connected:
+      name: "B2500 - 2 - B2500D: Extension 1 connected"
+      id: b2500_extern1_connected_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/extern1/connected"
+      icon: mdi:battery-plus
+    extern2_connected:
+      name: "B2500 - 2 - B2500D: Extension 2 connected"
+      id: b2500_extern2_connected_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/extern2/connected"
+      icon: mdi:battery-plus
+    smart_meter_connected:
+      name: "B2500 - 2 - B2500D: SmartMeter Connected"
+      id: b2500_smartmeter_connected_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/smartmeter/connected"
+      icon: mdi:meter-electric
+
   - platform: template
-    id: b2500_device_ble_ok_2
     name: "B2500 - 2 - B2500D: BLE Connected"
+    id: b2500_device_ble_ok_2
     device_id: b2500_device_2
     state_topic: "b2500/2/device/ble_ok"
     icon: mdi:bluetooth
@@ -767,52 +954,138 @@ sensor:
     generation: 2
     publish_unchanged_sensor_values: True
     in1_power:
-      id: b2500_in1_power_1
       name: "B2500 - 1 - B2500: In 1 - Power"
+      id: b2500_in1_power_1
       device_id: b2500_device_1
+      state_topic: "b2500/1/pv1/power"
+      retain: false
       device_class: power
       icon: mdi:solar-power
-      retain: false
-      internal: true
     in2_power:
-      id: b2500_in2_power_1
       name: "B2500 - 1 - B2500: In 2 - Power"
+      id: b2500_in2_power_1
       device_id: b2500_device_1
+      state_topic: "b2500/1/pv2/power"
+      retain: false
       device_class: power
       icon: mdi:solar-power
-      retain: false
-      internal: true
     in_total_power:
-      id: b2500_total_power_in_1
       name: "B2500 - 1 - B2500: Total Power In"
+      id: b2500_total_power_in_1
       device_id: b2500_device_1
-      device_class: power
+      state_topic: "b2500/1/pv/power"
       retain: false
-      internal: true
+      device_class: power
+      on_value:
+        then:
+          - script.execute: b2500_update_total_power_in
     out1_power:
-      id: b2500_out1_power_1
       name: "B2500 - 1 - B2500: Out 1 - Power"
+      id: b2500_out1_power_1
       device_id: b2500_device_1
-      device_class: power
+      state_topic: "b2500/1/power1/power"
       retain: false
-      internal: true
+      device_class: power
     out2_power:
-      id: b2500_out2_power_1
       name: "B2500 - 1 - B2500: Out 2 - Power"
+      id: b2500_out2_power_1
       device_id: b2500_device_1
-      device_class: power
+      state_topic: "b2500/1/power2/power"
       retain: false
-      internal: true
+      device_class: power
     out_total_power:
-      id: b2500_total_power_out_1
       name: "B2500 - 1 - B2500: Total Power Out"
+      id: b2500_total_power_out_1
       device_id: b2500_device_1
-      device_class: power
+      state_topic: "b2500/1/power/power"
       retain: false
-      internal: true
+      device_class: power
+      on_value:
+        then:
+          - script.execute: b2500_update_total_power_out
+    soc:
+      name: "B2500 - 1 - B2500: Battery Level"
+      id: b2500_battery_remaining_percent_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/battery/remaining_percent"
+      retain: false
+    capacity:
+      name: "B2500 - 1 - B2500: Battery Capacity"
+      id: b2500_battery_remaining_capacity_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/battery/remaining_capacity"
+      retain: false
+      device_class: energy
+      on_value:
+        then:
+          - script.execute: b2500_update_total_remaining_capacity
+    temperature_low:
+      name: "B2500 - 1 - B2500: Temperature 1"
+      id: b2500_device_temperature1_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/device/temp1"
+      retain: false
+      device_class: temperature
+      icon: mdi:thermometer
+    temperature_high:
+      name: "B2500 - 1 - B2500: Temperature 2"
+      id: b2500_device_temperature2_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/device/temp2"
+      retain: false
+      device_class: temperature
+      icon: mdi:thermometer
+    adaptive_power_out:
+      name: "B2500 - 1 - B2500: Smartmeter Power Out"
+      id: b2500_smartmeter_power_out_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/smartmeter/out"
+      retain: false
+      device_class: power
+      icon: mdi:home-lightning-bolt
+    smart_meter_reading:
+      name: "B2500 - 1 - B2500: Smartmeter Value"
+      id: b2500_smartmeter_value_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/smartmeter/value"
+      retain: false
+      device_class: apparent_power
+      icon: mdi:meter-electric
+    daily_total_battery_charge:
+      name: "B2500 - 1 - B2500: Daily Total Battery Charge"
+      id: b2500_daily_total_battery_charge_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/battery/daily_total_charge"
+      device_class: energy
+      unit_of_measurement: Wh
+      accuracy_decimals: 0
+    daily_total_battery_discharge:
+      name: "B2500 - 1 - B2500: Daily Total Battery Discharge"
+      id: b2500_daily_total_battery_discharge_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/battery/daily_total_discharge"
+      device_class: energy
+      unit_of_measurement: Wh
+      accuracy_decimals: 0
+    daily_total_load_charge:
+      name: "B2500 - 1 - B2500: Daily Total Load Charge"
+      id: b2500_daily_total_load_charge_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/load/daily_total_charge"
+      device_class: energy
+      unit_of_measurement: Wh
+      accuracy_decimals: 0
+    daily_total_load_discharge:
+      name: "B2500 - 1 - B2500: Daily Total Load Discharge"
+      id: b2500_daily_total_load_discharge_1
+      device_id: b2500_device_1
+      state_topic: "b2500/1/load/daily_total_discharge"
+      device_class: energy
+      unit_of_measurement: Wh
+      accuracy_decimals: 0
   - platform: total_daily_energy
-    id: b2500_total_daily_energy_in_1
     name: "B2500 - 1 - B2500: Total Daily Energy In"
+    id: b2500_total_daily_energy_in_1
     device_id: b2500_device_1
     state_topic: "b2500/1/pv/energy"
     power_id: b2500_total_power_in_1
@@ -827,8 +1100,8 @@ sensor:
       then:
         - script.execute: b2500_update_total_daily_energy_in
   - platform: total_daily_energy
-    id: b2500_total_daily_energy_out_1
     name: "B2500 - 1 - B2500: Total Daily Energy Out"
+    id: b2500_total_daily_energy_out_1
     device_id: b2500_device_1
     state_topic: "b2500/1/power/energy"
     power_id: b2500_total_power_out_1
@@ -842,57 +1115,371 @@ sensor:
     on_value:
       then:
         - script.execute: b2500_update_total_daily_energy_out
+  - platform: template
+    name: "B2500 - 1 - B2500: Cell Voltage Min"
+    id: b2500_device_cell_voltage_min_1
+    device_id: b2500_device_1
+    state_topic: "b2500/1/battery/cell_voltage/min"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:arrow-down-bold
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 1 - B2500: Cell Voltage Max"
+    id: b2500_device_cell_voltage_max_1
+    device_id: b2500_device_1
+    state_topic: "b2500/1/battery/cell_voltage/max"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:arrow-up-bold
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 1 - B2500: Cell Voltage Avg"
+    id: b2500_device_cell_voltage_avg_1
+    device_id: b2500_device_1
+    state_topic: "b2500/1/battery/cell_voltage/avg"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:approximately-equal
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 1 - B2500: Cell Voltage Sum"
+    id: b2500_device_cell_voltage_sum_1
+    device_id: b2500_device_1
+    state_topic: "b2500/1/battery/cell_voltage/sum"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:plus-box
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 1 - B2500: Cell Voltage Delta"
+    id: b2500_device_cell_voltage_diff_1
+    device_id: b2500_device_1
+    state_topic: "b2500/1/battery/cell_voltage/delta"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:delta
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 1 - B2500: Cell Voltage 1"
+    id: b2500_device_cell_voltage_1_1
+    device_id: b2500_device_1
+    state_topic: "b2500/1/battery/cell_voltage/1"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:battery
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 1 - B2500: Cell Voltage 2"
+    id: b2500_device_cell_voltage_1_2
+    device_id: b2500_device_1
+    state_topic: "b2500/1/battery/cell_voltage/2"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:battery
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 1 - B2500: Cell Voltage 3"
+    id: b2500_device_cell_voltage_1_3
+    device_id: b2500_device_1
+    state_topic: "b2500/1/battery/cell_voltage/3"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:battery
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 1 - B2500: Cell Voltage 4"
+    id: b2500_device_cell_voltage_1_4
+    device_id: b2500_device_1
+    state_topic: "b2500/1/battery/cell_voltage/4"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:battery
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 1 - B2500: Cell Voltage 5"
+    id: b2500_device_cell_voltage_1_5
+    device_id: b2500_device_1
+    state_topic: "b2500/1/battery/cell_voltage/5"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:battery
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 1 - B2500: Cell Voltage 6"
+    id: b2500_device_cell_voltage_1_6
+    device_id: b2500_device_1
+    state_topic: "b2500/1/battery/cell_voltage/6"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:battery
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 1 - B2500: Cell Voltage 7"
+    id: b2500_device_cell_voltage_1_7
+    device_id: b2500_device_1
+    state_topic: "b2500/1/battery/cell_voltage/7"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:battery
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 1 - B2500: Cell Voltage 8"
+    id: b2500_device_cell_voltage_1_8
+    device_id: b2500_device_1
+    state_topic: "b2500/1/battery/cell_voltage/8"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:battery
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 1 - B2500: Cell Voltage 9"
+    id: b2500_device_cell_voltage_1_9
+    device_id: b2500_device_1
+    state_topic: "b2500/1/battery/cell_voltage/9"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:battery
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 1 - B2500: Cell Voltage 10"
+    id: b2500_device_cell_voltage_1_10
+    device_id: b2500_device_1
+    state_topic: "b2500/1/battery/cell_voltage/10"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:battery
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 1 - B2500: Cell Voltage 11"
+    id: b2500_device_cell_voltage_1_11
+    device_id: b2500_device_1
+    state_topic: "b2500/1/battery/cell_voltage/11"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:battery
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 1 - B2500: Cell Voltage 12"
+    id: b2500_device_cell_voltage_1_12
+    device_id: b2500_device_1
+    state_topic: "b2500/1/battery/cell_voltage/12"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:battery
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 1 - B2500: Cell Voltage 13"
+    id: b2500_device_cell_voltage_1_13
+    device_id: b2500_device_1
+    state_topic: "b2500/1/battery/cell_voltage/13"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:battery
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 1 - B2500: Cell Voltage 14"
+    id: b2500_device_cell_voltage_1_14
+    device_id: b2500_device_1
+    state_topic: "b2500/1/battery/cell_voltage/14"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:battery
+    disabled_by_default: true
   - platform: b2500
     b2500_id: b2500_2
     generation: 2
     publish_unchanged_sensor_values: True
     in1_power:
-      id: b2500_in1_power_2
       name: "B2500 - 2 - B2500D: In 1 - Power"
+      id: b2500_in1_power_2
       device_id: b2500_device_2
+      state_topic: "b2500/2/pv1/power"
+      retain: false
       device_class: power
       icon: mdi:solar-power
-      retain: false
-      internal: true
     in2_power:
-      id: b2500_in2_power_2
       name: "B2500 - 2 - B2500D: In 2 - Power"
+      id: b2500_in2_power_2
       device_id: b2500_device_2
+      state_topic: "b2500/2/pv2/power"
+      retain: false
       device_class: power
       icon: mdi:solar-power
-      retain: false
-      internal: true
     in_total_power:
-      id: b2500_total_power_in_2
       name: "B2500 - 2 - B2500D: Total Power In"
+      id: b2500_total_power_in_2
       device_id: b2500_device_2
-      device_class: power
+      state_topic: "b2500/2/pv/power"
       retain: false
-      internal: true
+      device_class: power
+      on_value:
+        then:
+          - script.execute: b2500_update_total_power_in
     out1_power:
-      id: b2500_out1_power_2
       name: "B2500 - 2 - B2500D: Out 1 - Power"
+      id: b2500_out1_power_2
       device_id: b2500_device_2
-      device_class: power
+      state_topic: "b2500/2/power1/power"
       retain: false
-      internal: true
+      device_class: power
     out2_power:
-      id: b2500_out2_power_2
       name: "B2500 - 2 - B2500D: Out 2 - Power"
+      id: b2500_out2_power_2
       device_id: b2500_device_2
-      device_class: power
+      state_topic: "b2500/2/power2/power"
       retain: false
-      internal: true
+      device_class: power
     out_total_power:
-      id: b2500_total_power_out_2
       name: "B2500 - 2 - B2500D: Total Power Out"
+      id: b2500_total_power_out_2
       device_id: b2500_device_2
-      device_class: power
+      state_topic: "b2500/2/power/power"
       retain: false
-      internal: true
+      device_class: power
+      on_value:
+        then:
+          - script.execute: b2500_update_total_power_out
+    soc:
+      name: "B2500 - 2 - B2500D: Battery Level"
+      id: b2500_battery_remaining_percent_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/battery/remaining_percent"
+      retain: false
+    capacity:
+      name: "B2500 - 2 - B2500D: Battery Capacity"
+      id: b2500_battery_remaining_capacity_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/battery/remaining_capacity"
+      retain: false
+      device_class: energy
+      on_value:
+        then:
+          - script.execute: b2500_update_total_remaining_capacity
+    temperature_low:
+      name: "B2500 - 2 - B2500D: Temperature 1"
+      id: b2500_device_temperature1_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/device/temp1"
+      retain: false
+      device_class: temperature
+      icon: mdi:thermometer
+    temperature_high:
+      name: "B2500 - 2 - B2500D: Temperature 2"
+      id: b2500_device_temperature2_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/device/temp2"
+      retain: false
+      device_class: temperature
+      icon: mdi:thermometer
+    adaptive_power_out:
+      name: "B2500 - 2 - B2500D: Smartmeter Power Out"
+      id: b2500_smartmeter_power_out_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/smartmeter/out"
+      retain: false
+      device_class: power
+      icon: mdi:home-lightning-bolt
+    smart_meter_reading:
+      name: "B2500 - 2 - B2500D: Smartmeter Value"
+      id: b2500_smartmeter_value_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/smartmeter/value"
+      retain: false
+      device_class: apparent_power
+      icon: mdi:meter-electric
+    daily_total_battery_charge:
+      name: "B2500 - 2 - B2500D: Daily Total Battery Charge"
+      id: b2500_daily_total_battery_charge_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/battery/daily_total_charge"
+      device_class: energy
+      unit_of_measurement: Wh
+      accuracy_decimals: 0
+    daily_total_battery_discharge:
+      name: "B2500 - 2 - B2500D: Daily Total Battery Discharge"
+      id: b2500_daily_total_battery_discharge_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/battery/daily_total_discharge"
+      device_class: energy
+      unit_of_measurement: Wh
+      accuracy_decimals: 0
+    daily_total_load_charge:
+      name: "B2500 - 2 - B2500D: Daily Total Load Charge"
+      id: b2500_daily_total_load_charge_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/load/daily_total_charge"
+      device_class: energy
+      unit_of_measurement: Wh
+      accuracy_decimals: 0
+    daily_total_load_discharge:
+      name: "B2500 - 2 - B2500D: Daily Total Load Discharge"
+      id: b2500_daily_total_load_discharge_2
+      device_id: b2500_device_2
+      state_topic: "b2500/2/load/daily_total_discharge"
+      device_class: energy
+      unit_of_measurement: Wh
+      accuracy_decimals: 0
   - platform: total_daily_energy
-    id: b2500_total_daily_energy_in_2
     name: "B2500 - 2 - B2500D: Total Daily Energy In"
+    id: b2500_total_daily_energy_in_2
     device_id: b2500_device_2
     state_topic: "b2500/2/pv/energy"
     power_id: b2500_total_power_in_2
@@ -907,8 +1494,8 @@ sensor:
       then:
         - script.execute: b2500_update_total_daily_energy_in
   - platform: total_daily_energy
-    id: b2500_total_daily_energy_out_2
     name: "B2500 - 2 - B2500D: Total Daily Energy Out"
+    id: b2500_total_daily_energy_out_2
     device_id: b2500_device_2
     state_topic: "b2500/2/power/energy"
     power_id: b2500_total_power_out_2
@@ -923,24 +1510,289 @@ sensor:
       then:
         - script.execute: b2500_update_total_daily_energy_out
   - platform: template
+    name: "B2500 - 2 - B2500D: Cell Voltage Min"
+    id: b2500_device_cell_voltage_min_2
+    device_id: b2500_device_2
+    state_topic: "b2500/2/battery/cell_voltage/min"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:arrow-down-bold
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 2 - B2500D: Cell Voltage Max"
+    id: b2500_device_cell_voltage_max_2
+    device_id: b2500_device_2
+    state_topic: "b2500/2/battery/cell_voltage/max"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:arrow-up-bold
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 2 - B2500D: Cell Voltage Avg"
+    id: b2500_device_cell_voltage_avg_2
+    device_id: b2500_device_2
+    state_topic: "b2500/2/battery/cell_voltage/avg"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:approximately-equal
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 2 - B2500D: Cell Voltage Sum"
+    id: b2500_device_cell_voltage_sum_2
+    device_id: b2500_device_2
+    state_topic: "b2500/2/battery/cell_voltage/sum"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:plus-box
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 2 - B2500D: Cell Voltage Delta"
+    id: b2500_device_cell_voltage_diff_2
+    device_id: b2500_device_2
+    state_topic: "b2500/2/battery/cell_voltage/delta"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:delta
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 2 - B2500D: Cell Voltage 1"
+    id: b2500_device_cell_voltage_2_1
+    device_id: b2500_device_2
+    state_topic: "b2500/2/battery/cell_voltage/1"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:battery
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 2 - B2500D: Cell Voltage 2"
+    id: b2500_device_cell_voltage_2_2
+    device_id: b2500_device_2
+    state_topic: "b2500/2/battery/cell_voltage/2"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:battery
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 2 - B2500D: Cell Voltage 3"
+    id: b2500_device_cell_voltage_2_3
+    device_id: b2500_device_2
+    state_topic: "b2500/2/battery/cell_voltage/3"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:battery
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 2 - B2500D: Cell Voltage 4"
+    id: b2500_device_cell_voltage_2_4
+    device_id: b2500_device_2
+    state_topic: "b2500/2/battery/cell_voltage/4"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:battery
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 2 - B2500D: Cell Voltage 5"
+    id: b2500_device_cell_voltage_2_5
+    device_id: b2500_device_2
+    state_topic: "b2500/2/battery/cell_voltage/5"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:battery
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 2 - B2500D: Cell Voltage 6"
+    id: b2500_device_cell_voltage_2_6
+    device_id: b2500_device_2
+    state_topic: "b2500/2/battery/cell_voltage/6"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:battery
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 2 - B2500D: Cell Voltage 7"
+    id: b2500_device_cell_voltage_2_7
+    device_id: b2500_device_2
+    state_topic: "b2500/2/battery/cell_voltage/7"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:battery
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 2 - B2500D: Cell Voltage 8"
+    id: b2500_device_cell_voltage_2_8
+    device_id: b2500_device_2
+    state_topic: "b2500/2/battery/cell_voltage/8"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:battery
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 2 - B2500D: Cell Voltage 9"
+    id: b2500_device_cell_voltage_2_9
+    device_id: b2500_device_2
+    state_topic: "b2500/2/battery/cell_voltage/9"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:battery
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 2 - B2500D: Cell Voltage 10"
+    id: b2500_device_cell_voltage_2_10
+    device_id: b2500_device_2
+    state_topic: "b2500/2/battery/cell_voltage/10"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:battery
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 2 - B2500D: Cell Voltage 11"
+    id: b2500_device_cell_voltage_2_11
+    device_id: b2500_device_2
+    state_topic: "b2500/2/battery/cell_voltage/11"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:battery
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 2 - B2500D: Cell Voltage 12"
+    id: b2500_device_cell_voltage_2_12
+    device_id: b2500_device_2
+    state_topic: "b2500/2/battery/cell_voltage/12"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:battery
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 2 - B2500D: Cell Voltage 13"
+    id: b2500_device_cell_voltage_2_13
+    device_id: b2500_device_2
+    state_topic: "b2500/2/battery/cell_voltage/13"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:battery
+    disabled_by_default: true
+  - platform: template
+    name: "B2500 - 2 - B2500D: Cell Voltage 14"
+    id: b2500_device_cell_voltage_2_14
+    device_id: b2500_device_2
+    state_topic: "b2500/2/battery/cell_voltage/14"
+    retain: false
+    unit_of_measurement: 'V'
+    accuracy_decimals: 3
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:battery
+    disabled_by_default: true
+  - platform: template
+    name: "Total Power In"
+    id: b2500_total_in_power
+    state_topic: "b2500/S/pv/power"
+    retain: false
+    accuracy_decimals: 0
+    unit_of_measurement: W
+    device_class: power
+
+  - platform: template
+    name: "Total Power Out"
+    id: b2500_total_out_power
+    state_topic: "b2500/S/power/power"
+    retain: false
+    accuracy_decimals: 0
+    unit_of_measurement: W
+    device_class: power
+
+  - platform: template
     name: "Total Daily Energy In"
     id: b2500_total_daily_energy_in
     state_topic: "b2500/S/pv/energy"
+    retain: false
     accuracy_decimals: 3
     unit_of_measurement: kWh
     device_class: energy
-    retain: false
 
   - platform: template
     name: "Total Daily Energy Out"
     id: b2500_total_daily_energy_out
     state_topic: "b2500/S/power/energy"
+    retain: false
     accuracy_decimals: 3
     unit_of_measurement: kWh
     device_class: energy
-    retain: false
+
+  - platform: template
+    name: "Total Remaining Capacity"
+    id: b2500_total_remaining_capacity
+    state_topic: "b2500/S/battery/remaining_capacity"
+    unit_of_measurement: Wh
+    device_class: energy
 
 script:
+  - id: b2500_update_total_power_in
+    then:
+      - sensor.template.publish:
+          id: b2500_total_in_power
+          state: !lambda |-
+            return id(b2500_total_power_in_1).state + id(b2500_total_power_in_2).state;
+  - id: b2500_update_total_power_out
+    then:
+      - sensor.template.publish:
+          id: b2500_total_out_power
+          state: !lambda |-
+            return id(b2500_total_power_out_1).state + id(b2500_total_power_out_2).state;
   - id: b2500_update_total_daily_energy_in
     then:
       - sensor.template.publish:
@@ -953,3 +1805,10 @@ script:
           id: b2500_total_daily_energy_out
           state: !lambda |-
             return id(b2500_total_daily_energy_out_1).state + id(b2500_total_daily_energy_out_2).state;
+  - id: b2500_update_total_remaining_capacity
+    then:
+      - sensor.template.publish:
+          id: b2500_total_remaining_capacity
+          state: !lambda |-
+            return id(b2500_battery_remaining_capacity_1).state + id(b2500_battery_remaining_capacity_2).state;
+
