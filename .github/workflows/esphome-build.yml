@@ -32,4 +32,4 @@ jobs:
         with:
           name: esphome-firmware
           path: |
-            .esphome/build/*/*.bin
+            .esphome/build/**/firmware*.bin
