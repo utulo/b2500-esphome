@@ -32,4 +32,4 @@ jobs:
         with:
           name: esphome-firmware
           path: |
-            .esphome/build/**/firmware*.bin
+            .esphome/build/b2500/.pioenvs/b2500/*.bin
