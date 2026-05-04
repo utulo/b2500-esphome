@@ -73,6 +73,7 @@ mqtt:
   password: "ghmue001"
   discovery: True
   reboot_timeout: 0s
+  clean_session: True
   topic_prefix: "b2500"
   log_topic: "b2500/debug"
   on_connect:
