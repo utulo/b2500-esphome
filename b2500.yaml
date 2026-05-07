@@ -174,9 +174,9 @@ esp32_ble:
 
 esp32_ble_tracker:
   scan_parameters:
-    interval: 3000ms
-    window: 15ms
-    active: false
+    interval: 1200ms
+    window: 1200ms
+    active: true
 
 
 ble_client:
