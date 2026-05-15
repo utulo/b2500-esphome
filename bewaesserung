@@ -1,9 +1,9 @@
 esphome:
-  name: bewaesserung
-  friendly_name: Bewaesserung
+  name: "bewaesserung"
+  friendly_name: "Bewaesserung"
 
 esp32:
-  board: esp32dev
+  board: "esp32dev"
   framework:
     type: esp-idf
 
@@ -15,8 +15,8 @@ ota:
     password: "my_ota_password"
 
 wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
+  ssid: "doreen1"
+  password: "2DP3UGGRU3GZFKLM"
   reboot_timeout: 0s
   fast_connect: true
   power_save_mode: LIGHT
@@ -33,10 +33,14 @@ wifi:
     - logger.log:
         level: INFO
         format: "Disconnected from WiFi"
-
+web_server:
+  port: 80
+  ota: false
+  version: 3
+captive_portal:
 mqtt:
   id: mqtt_client
-  broker: 192.168.178.98
+  broker: "192.168.178.98"
   port: 1883
   client_id: bwc_esp32
   keepalive: 60s
