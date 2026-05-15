@@ -5,18 +5,14 @@ esphome:
 esp32:
   board: esp32dev
   framework:
-    type: arduino
+    type: esp-idf
 
-# Logging
+# Enable logging
 logger:
   level: INFO
-
-# Home Assistant API
-api:
-
-# OTA Updates
 ota:
-  platform: esphome
+  - platform: esphome
+    password: "my_ota_password"
 
 wifi:
   ssid: !secret wifi_ssid
@@ -25,7 +21,7 @@ wifi:
   fast_connect: true
   power_save_mode: LIGHT
   manual_ip:
-    static_ip: 192.168.178.97
+    static_ip: 192.168.178.65
     gateway: 192.168.178.1
     subnet: 255.255.255.0
     dns1: 192.168.178.1
