@@ -19,6 +19,7 @@ esp32:
   framework:
     type: esp-idf
     sdkconfig_options:
+      CONFIG_BT_BLE_DYNAMIC_ENV_MEMORY: y
       CONFIG_FREERTOS_UNICORE: y
       COMPILER_OPTIMIZATION_SIZE: y
 
@@ -41,6 +42,7 @@ wifi:
   ssid: "doreen1"
   password: "2DP3UGGRU3GZFKLM"
   reboot_timeout: 0s
+  power_save_mode: none
   fast_connect: True
   manual_ip:
     static_ip: "192.168.178.97"
@@ -176,7 +178,7 @@ esp32_ble_tracker:
   scan_parameters:
     interval: 1200ms
     window: 1200ms
-    active: true
+    active: false
 
 
 ble_client:
