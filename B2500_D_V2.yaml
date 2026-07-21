@@ -20,9 +20,9 @@ esp32:
   flash_size: 16MB
   framework:
     type: esp-idf
-#    sdkconfig_options:
+    sdkconfig_options:
 #      CONFIG_FREERTOS_UNICORE: y
-#      COMPILER_OPTIMIZATION_SIZE: y
+      COMPILER_OPTIMIZATION_SIZE: y
 
 psram:
   mode: octal
@@ -949,7 +949,7 @@ sensor:
   - platform: b2500
     b2500_id: b2500_1
     generation: 2
-    publish_unchanged_sensor_values: True
+    publish_unchanged_sensor_values: False
     in1_power:
       name: "B2500 - 1 - B2500: In 1 - Power"
       id: b2500_in1_power_1
@@ -1343,7 +1343,7 @@ sensor:
   - platform: b2500
     b2500_id: b2500_2
     generation: 2
-    publish_unchanged_sensor_values: True
+    publish_unchanged_sensor_values: False
     in1_power:
       name: "B2500 - 2 - B2500D: In 1 - Power"
       id: b2500_in1_power_2
