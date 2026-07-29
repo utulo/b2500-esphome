@@ -24,10 +24,6 @@ esp32:
       CONFIG_FREERTOS_UNICORE: y
       COMPILER_OPTIMIZATION_SIZE: y
 
-psram:
-  mode: octal
-  speed: 80MHz
-
 # Enable logging
 logger:
   level: INFO
